@@ -1,7 +1,8 @@
 // src/firebase.js
+
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore"; // <-- Asegúrate de importar getFirestore
 import { getStorage } from "firebase/storage";
 
 // Lee las variables de entorno desde .env.local
@@ -19,3 +20,5 @@ const app = initializeApp(firebaseConfig);
 
 // Exporta los servicios que necesitas
 export const auth = getAuth(app);
+export const db = getFirestore(app); // <-- ESTA ES LA LÍNEA CLAVE
+export const storage = getStorage(app);
