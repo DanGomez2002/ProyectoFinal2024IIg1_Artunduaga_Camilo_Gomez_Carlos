@@ -1,0 +1,161 @@
+/* Estilo del Contenedor Principal */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+/* Estilo del Encabezado (Header) */
+.dashboard-header {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; 
+    gap: 15px;
+    border-left: 5px solid #007bff; /* Detalle de color */
+}
+
+.dashboard-header h1 {
+    font-size: 28px;
+    color: #1a4f8d; 
+    font-weight: 800;
+}
+
+/* Información del Usuario y Botón de Salir */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-text-details {
+    text-align: right;
+}
+
+.user-info .user-email {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}
+
+/* Etiqueta de Rol (Mejora de Contraste) */
+.user-info .user-role-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 2px;
+}
+
+/* Colores para Roles */
+.role-Reportero {
+    background-color: #d4edda; /* Verde claro */
+    color: #155724; /* Verde oscuro */
+}
+
+.role-Editor {
+    background-color: #e2d4f8; /* Morado claro */
+    color: #4f2d7a; /* Morado oscuro */
+}
+
+.logout-button {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+}
+
+/* Contenedor de Vistas y Acciones */
+.dashboard-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+    flex-wrap: wrap; 
+    gap: 10px;
+}
+
+.dashboard-actions h2 {
+    font-size: 20px;
+    color: #444;
+}
+
+/* Botones de Acción Global (Crear/Administrar Secciones) */
+.create-news-link, .admin-sections-link {
+    text-decoration: none;
+    font-size: 14px;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.create-news-link {
+    background-color: #28a745; /* Verde para Crear */
+    color: white;
+}
+
+.create-news-link:hover {
+    background-color: #1e7e34;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.4);
+}
+
+.admin-sections-link {
+    background-color: #ffc107; /* Amarillo para Admin */
+    color: #333;
+}
+
+.admin-sections-link:hover {
+    background-color: #e0a800;
+    box-shadow: 0 2px 4px rgba(255, 193, 7, 0.4);
+}
+
+/* Estilos de responsividad */
+@media (max-width: 600px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .user-info {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    .user-text-details {
+        text-align: left;
+    }
+    .dashboard-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .create-news-link, .admin-sections-link {
+        width: 100%;
+        text-align: center;
+    }
+}

@@ -1,0 +1,121 @@
+.news-item {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    gap: 20px;
+    transition: box-shadow 0.3s;
+}
+
+.news-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.news-item-image {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.news-item-content {
+    flex-grow: 1;
+}
+
+.news-item-content h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #1a4f8d;
+    margin-bottom: 5px;
+}
+
+.news-item-content p {
+    margin: 3px 0;
+    font-size: 13px;
+    color: #777;
+}
+
+/* Indicadores de Estado */
+.news-item-content .status-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* Colores de Estado (CRUCIAL PARA LA RÚBRICA) */
+.status-Edición {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-Terminado {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-Publicado {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-Desactivado {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Botones de Acción (Editar, Publicar, Eliminar) */
+.news-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.action-link, .action-button {
+    text-decoration: none;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+    border: 1px solid transparent;
+}
+
+/* Estilos de botones específicos */
+.edit, .edit-editor { background-color: #007bff; color: white; }
+.edit:hover, .edit-editor:hover { background-color: #0056b3; }
+
+.finish { background-color: #ffc107; color: #333; border-color: #ffc107; }
+.finish:hover { background-color: #e0a800; }
+
+.publish { background-color: #28a745; color: white; }
+.publish:hover { background-color: #1e7e34; }
+
+.deactivate { background-color: #6c757d; color: white; }
+.deactivate:hover { background-color: #5a6268; }
+
+.edit-back { background-color: #17a2b8; color: white; }
+.edit-back:hover { background-color: #138496; }
+
+.delete, .delete-editor { background-color: #dc3545; color: white; }
+.delete:hover, .delete-editor:hover { background-color: #c82333; }
+
+/* Responsividad para la lista */
+@media (max-width: 600px) {
+    .news-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .news-item-image {
+        width: 100%;
+        height: 150px;
+    }
+}

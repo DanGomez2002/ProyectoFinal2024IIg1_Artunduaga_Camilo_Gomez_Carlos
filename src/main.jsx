@@ -16,6 +16,7 @@ import LoginPage from "./pages/LoginPage/LoginPage.jsx";
 import DashboardPage from "./pages/DashboardPage/DashboardPage.jsx";
 import CreateNewsPage from "./pages/CreateNewsPage/CreateNewsPage.jsx";
 import EditNewsPage from "./pages/EditNewsPage/EditNewsPage.jsx";
+import SectionAdminPage from './pages/SectionAdminPage/SectionAdminPage.jsx';
 // Front
 import HomePage from "./pages/HomePage/HomePage.jsx";
 import NewsDetailPage from "./pages/NewsDetailPage/NewsDetailPage.jsx";
@@ -65,6 +66,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <EditNewsPage />{" "}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/dashboard/secciones',
+        element: (
+          <ProtectedRoute>
+            <SectionAdminPage />
           </ProtectedRoute>
         ),
       },

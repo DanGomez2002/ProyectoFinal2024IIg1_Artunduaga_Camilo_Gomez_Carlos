@@ -1,7 +1,5 @@
-// src/components/NewsList/NewsList.jsx
-
 import { useState, useEffect } from "react";
-import { db, storage } from "../../firebase"; // 1. Importamos Storage
+import { db, storage } from "../../firebase"; // Importación limpia (sin extensión)
 import {
   collection,
   query,
@@ -11,18 +9,18 @@ import {
   doc,
   updateDoc,
   deleteDoc,
-} from "firebase/firestore"; // 2. Importamos deleteDoc
-import { ref, deleteObject } from "firebase/storage"; // 3. Importamos deleteObject
-import { useAuth } from "../../context/AuthContext";
+} from "firebase/firestore";
+import { ref, deleteObject } from "firebase/storage";
+import { useAuth } from "../../context/AuthContext"; // Importación limpia (sin extensión)
 import { Link } from "react-router-dom";
-import "./NewsList.css";
+import "./NewsList.css"; // <-- Importación necesaria para el estilo
 
 function NewsList({ mode }) {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentUser, userRole } = useAuth();
 
-  // Función para cambiar el estado (ya la teníamos)
+  // Función para cambiar el estado (RF-07)
   const handleChangeStatus = async (newsId, newStatus) => {
     if (
       !window.confirm(`¿Estás seguro de cambiar el estado a "${newStatus}"?`)
@@ -32,14 +30,12 @@ function NewsList({ mode }) {
     try {
       const docRef = doc(db, "news", newsId);
       await updateDoc(docRef, { status: newStatus });
-      console.log(`Estado de noticia ${newsId} cambiado a ${newStatus}`);
     } catch (error) {
       console.error("Error al actualizar el estado:", error);
-      alert("Hubo un error al cambiar el estado.");
     }
   };
 
-  // 4. FUNCIÓN PARA ELIMINAR (DELETE)
+  // Función para eliminar (D de CRUD)
   const handleDelete = async (newsId, imageUrl) => {
     if (
       !window.confirm(
@@ -50,48 +46,45 @@ function NewsList({ mode }) {
     }
 
     try {
-      // 5. ELIMINAR el documento de Firestore
-      const docRef = doc(db, "news", newsId);
-      await deleteDoc(docRef);
+      await deleteDoc(doc(db, "news", newsId));
 
-      // 6. ELIMINAR la imagen de Storage
       if (imageUrl) {
-        // Creamos la referencia al archivo usando la URL completa
         const imageRef = ref(storage, imageUrl);
         await deleteObject(imageRef).catch((storageError) => {
-          // Capturamos el error si el archivo no existe (no es crítico)
           console.warn(
-            "No se pudo eliminar el archivo de Storage. Probablemente ya no existe.",
+            "Error al eliminar la imagen de Storage (puede que no exista).",
             storageError
           );
         });
       }
-
-      console.log(`Noticia y Storage eliminados: ${newsId}`);
     } catch (error) {
       console.error("Error al eliminar la noticia:", error);
-      alert("Hubo un error al eliminar la noticia. Revisa la consola.");
     }
   };
 
   useEffect(() => {
-    // ... (el useEffect de carga es el mismo) ...
     if (!currentUser) return;
 
     setLoading(true);
     const newsCollectionRef = collection(db, "news");
     let q;
 
+    // Definir la consulta según el rol (RF-05)
     if (mode === "reporter") {
+      // ⬅️ SOLUCIÓN TEMPORAL: Quitamos orderBy para evitar el error de índice.
+      // Cuando crees el índice en Firebase, puedes volver a añadir la línea orderBy.
       q = query(
         newsCollectionRef,
-        where("author", "==", currentUser.uid),
-        orderBy("createdAt", "desc")
+        where("author", "==", currentUser.uid)
+        // Descomenta la siguiente línea una vez que el índice esté creado en Firebase:
+        // , orderBy('createdAt', 'desc')
       );
     } else if (mode === "editor") {
+      // El Editor ve todas las noticias, ordenadas por fecha
       q = query(newsCollectionRef, orderBy("createdAt", "desc"));
     }
 
+    // Escuchar cambios en tiempo real
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
@@ -112,11 +105,15 @@ function NewsList({ mode }) {
   }, [mode, currentUser]);
 
   if (loading) {
-    return <p>Cargando noticias...</p>;
+    return <p className="loading-message">Cargando noticias...</p>;
   }
 
   if (news.length === 0) {
-    return <p>No hay noticias para mostrar.</p>;
+    return (
+      <p className="no-news-message">
+        No hay noticias para mostrar en este momento.
+      </p>
+    );
   }
 
   return (
@@ -127,22 +124,35 @@ function NewsList({ mode }) {
             src={item.imageUrl}
             alt={item.title}
             className="news-item-image"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src =
+                "https://placehold.co/180x180/E0E0E0/333333?text=Sin+Imagen";
+            }} // Fallback
           />
           <div className="news-item-content">
             <h3>{item.title}</h3>
-            <p>Autor: {item.authorEmail}</p>
-            <p>Categoría: {item.category}</p>
+            <p className="news-meta">
+              <span>Autor: {item.authorEmail}</span>
+              <span>Categoría: {item.category}</span>
+            </p>
+            {/* Estado dinámico (RF-07) */}
             <p>
-              Estado:{" "}
-              <span className={`status-${item.status}`}>{item.status}</span>
+              Estado:
+              <span className={`status-tag status-${item.status}`}>
+                {item.status}
+              </span>
             </p>
 
+            {/* BOTONES DE ACCIÓN */}
             <div className="news-actions">
               {/* LÓGICA DEL REPORTERO */}
               {userRole === "Reportero" && item.author === currentUser.uid && (
                 <>
+                  {/* Editar y Eliminar (Solo si está en Edición/Desactivado/Terminado) */}
                   {(item.status === "Edición" ||
-                    item.status === "Desactivado") && (
+                    item.status === "Desactivado" ||
+                    item.status === "Terminado") && (
                     <Link
                       to={`/dashboard/editar-noticia/${item.id}`}
                       className="action-link edit"
@@ -150,6 +160,8 @@ function NewsList({ mode }) {
                       Editar
                     </Link>
                   )}
+
+                  {/* Pasar a Terminado */}
                   {item.status === "Edición" && (
                     <button
                       onClick={() => handleChangeStatus(item.id, "Terminado")}
@@ -158,7 +170,8 @@ function NewsList({ mode }) {
                       Terminar
                     </button>
                   )}
-                  {/* BOTÓN DE ELIMINAR para Reportero (Solo si está en Edición/Desactivado) */}
+
+                  {/* Eliminar (Solo si está en Edición/Desactivado) */}
                   {(item.status === "Edición" ||
                     item.status === "Desactivado") && (
                     <button
@@ -174,6 +187,8 @@ function NewsList({ mode }) {
               {/* LÓGICA DEL EDITOR */}
               {userRole === "Editor" && (
                 <>
+                  {/* El Editor ve los botones de acción para todas las noticias */}
+                  {/* Publicar (Solo si está Terminado) */}
                   {item.status === "Terminado" && (
                     <button
                       onClick={() => handleChangeStatus(item.id, "Publicado")}
@@ -183,6 +198,7 @@ function NewsList({ mode }) {
                     </button>
                   )}
 
+                  {/* Desactivar (Solo si está Publicado) */}
                   {item.status === "Publicado" && (
                     <button
                       onClick={() => handleChangeStatus(item.id, "Desactivado")}
@@ -192,17 +208,24 @@ function NewsList({ mode }) {
                     </button>
                   )}
 
+                  {/* Enviar a Edición (Solo si está Desactivado o Terminado) */}
                   {(item.status === "Desactivado" ||
                     item.status === "Terminado") && (
                     <button
                       onClick={() => handleChangeStatus(item.id, "Edición")}
                       className="action-button edit-back"
                     >
-                      Enviar a Edición
+                      A Edición
                     </button>
                   )}
 
-                  {/* El editor siempre puede eliminar, independientemente del estado */}
+                  {/* El editor puede editar o eliminar siempre (RF-03) */}
+                  <Link
+                    to={`/dashboard/editar-noticia/${item.id}`}
+                    className="action-link edit-editor"
+                  >
+                    Editar
+                  </Link>
                   <button
                     onClick={() => handleDelete(item.id, item.imageUrl)}
                     className="action-button delete-editor"

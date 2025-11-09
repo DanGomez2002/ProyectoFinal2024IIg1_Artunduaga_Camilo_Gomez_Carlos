@@ -1,0 +1,66 @@
+/* Este archivo funciona junto con las clases de formulario definidas globalmente 
+   (como .form-page-container y .form-card) para mantener la coherencia. */
+
+/* Estilos para el listado de secciones */
+.sections-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+    border-top: 1px solid #eee;
+}
+
+.section-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+}
+
+.section-item span {
+    font-weight: 500;
+    color: #333;
+}
+
+/* Botón de eliminación */
+.delete-section-button {
+    background-color: #f44336; /* Rojo */
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s;
+}
+
+.delete-section-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Estilo para el formulario de agregar sección (Crea la clase .add-section-form en el JSX) */
+.add-section-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.add-section-form .form-input {
+    flex-grow: 1; /* Permite que el input ocupe el espacio restante */
+}
+
+.add-section-form button {
+    background-color: #1a4f8d; /* Azul corporativo */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.add-section-form button:hover {
+    background-color: #113c6b;
+}

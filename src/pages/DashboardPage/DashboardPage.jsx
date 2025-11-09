@@ -1,9 +1,7 @@
-// src/pages/DashboardPage/DashboardPage.jsx
-
-import { useAuth } from '../../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import NewsList from '../../components/NewsList/NewsList.jsx'; // <-- 1. IMPORTAR
-import './DashboardPage.css';
+import { useAuth } from "../../context/AuthContext"; // Importación limpia
+import { useNavigate, Link } from "react-router-dom";
+import NewsList from "../../components/NewsList/NewsList.jsx";
+import "./DashboardPage.css"; // Asegúrate de que este archivo exista
 
 function DashboardPage() {
   const { currentUser, userRole, logout } = useAuth();
@@ -12,50 +10,87 @@ function DashboardPage() {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+      console.error("Error al cerrar sesión:", error);
     }
   };
 
   return (
     <div className="dashboard-container">
+      {" "}
+      {/* CLASE DEL CONTENEDOR PRINCIPAL */}{" "}
       <header className="dashboard-header">
-        <h1>Panel de Administración</h1>
+        {" "}
+        {/* CLASE DEL HEADER */} <h1>Panel de Administración</h1>
+        {" "}
         <div className="user-info">
-          <span>Hola, {currentUser?.email}</span>
-          <span>(Rol: {userRole})</span>
+          {" "}
+          {/* CLASE DE INFORMACIÓN DE USUARIO */}{" "}
+          <div className="user-text-details">
+            {" "}
+            {/* Contenedor para alinear texto */}{" "}
+            <span className="user-email">Hola, {currentUser?.email}</span>
+            {" "}
+            <span className={`user-role-tag role-${userRole}`}>
+              {" "}
+              {/* Clases de Rol Dinámico */}
+              Rol: {userRole}
+            </span>
+            {" "}
+          </div>
+          {" "}
           <button onClick={handleLogout} className="logout-button">
-            Cerrar Sesión
+            {" "}
+            {/* CLASE DEL BOTÓN */} Cerrar Sesión {" "}
           </button>
+          {" "}
         </div>
+        {" "}
       </header>
-
+      {" "}
       <main className="dashboard-content">
-        
-        {/* VISTA DEL REPORTERO */}
-        {userRole === 'Reportero' && (
+        {" "}
+        {/* CLASE DEL CONTENEDOR DE CONTENIDO */}{" "}
+        {/* VISTA DEL REPORTERO */}{" "}
+        {userRole === "Reportero" && (
           <div className="reportero-view">
+            {" "}
             <div className="dashboard-actions">
-              <h2>Mis Noticias</h2>
+              {" "}
+              {/* CLASE DE ACCIONES */} <h2>Mis Noticias</h2>
+              {" "}
               <Link to="/dashboard/crear-noticia" className="create-news-link">
-                + Crear Nueva Noticia
+                {" "}
+                {/* CLASE DE BOTÓN */} + Crear Nueva Noticia
+                {" "}
               </Link>
+             {" "}
             </div>
-            {/* 2. REEMPLAZAR EL PÁRRAFO POR EL COMPONENTE */}
-            <NewsList mode="reporter" />
+             <NewsList mode="reporter" />{" "}
           </div>
         )}
-
-        {/* VISTA DEL EDITOR */}
-        {userRole === 'Editor' && (
+        {/* VISTA DEL EDITOR */}{" "}
+        {userRole === "Editor" && (
           <div className="editor-view">
-            <h2>Todas las Noticias</h2>
-            {/* 3. REEMPLAZAR EL PÁRRAFO POR EL COMPONENTE */}
-            <NewsList mode="editor" />
+           {" "}
+            <div className="dashboard-actions">
+              {" "}
+              {/* CLASE DE ACCIONES */} <h2>Todas las Noticias</h2>
+              {" "}
+              <Link to="/dashboard/secciones" className="admin-sections-link">
+                {" "}
+                {/* CLASE DE BOTÓN */} Administrar Secciones 
+                {" "}
+              </Link>
+              {" "}
+            </div>
+             <NewsList mode="editor" />{" "}
           </div>
         )}
+        {" "}
       </main>
+      {" "}
     </div>
   );
 }

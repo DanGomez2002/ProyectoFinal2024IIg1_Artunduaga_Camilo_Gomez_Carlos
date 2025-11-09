@@ -1,22 +1,20 @@
-// src/App.jsx
-
 import { Outlet } from 'react-router-dom';
-
-// (Aquí podríamos poner un Navbar o un Footer que se vea en todas las páginas)
+import Navbar from './components/Navbar/Navbar.jsx';
+import Footer from './components/Footer/Footer.jsx';
 
 function App() {
   return (
-    <div className="app-container">
-      {/* <h1>Mi Portal de Noticias</h1> */}
-
-      <main>
-        {/* 'Outlet' es el espacio donde se renderizarán 
-            todas las páginas que definimos en main.jsx 
-            (HomePage, LoginPage, etc.) */}
-        <Outlet />
+    // Quitamos la clase "app-container". Dejamos que #root (en index.css) controle el layout.
+    <div> 
+      
+      <Navbar /> 
+      
+      {/* La clase flex-grow-main ahora empuja el footer hacia abajo */}
+      <main className="flex-grow-main"> 
+        <Outlet /> 
       </main>
-
-      {/* <footer>Copyright 2025</footer> */}
+      
+      <Footer /> 
     </div>
   );
 }

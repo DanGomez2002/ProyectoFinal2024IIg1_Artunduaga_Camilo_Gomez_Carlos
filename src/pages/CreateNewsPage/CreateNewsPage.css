@@ -1,0 +1,76 @@
+/* Contenedor del formulario */
+.form-page-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+.form-card {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.form-card h2 {
+    font-size: 24px;
+    color: #1a4f8d;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+/* Grupo de campo */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+    font-size: 15px;
+}
+
+/* Campos de entrada genéricos (input, select, textarea) */
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 14px;
+    background-color: #fff;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    outline: none;
+}
+
+/* Estilo para el botón de envío (reutiliza btn-primary del index.css) */
+.btn-form-submit {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+/* Estilo para el campo de subida de imagen (file input) */
+.form-input[type="file"] {
+    padding: 8px;
+    border: 1px dashed #ccc;
+}
+
+/* Estilo para la imagen actual en la página de edición */
+.current-image-preview {
+    margin-top: 10px;
+    display: block;
+    max-width: 150px;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}

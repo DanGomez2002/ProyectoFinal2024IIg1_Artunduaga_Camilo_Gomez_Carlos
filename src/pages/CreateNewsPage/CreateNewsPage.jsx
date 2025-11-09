@@ -1,29 +1,43 @@
-// src/pages/CreateNewsPage/CreateNewsPage.jsx
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { storage, db } from '../../firebase'; // Importamos Storage y Firestore
+import { useAuth } from '../../context/AuthContext.jsx';
+import { storage, db } from '../../firebase.js'; 
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import './CreateNewsPage.css';
+import { collection, addDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
+import './CreateNewsPage.css'; // <-- Importa los nuevos estilos
 
 function CreateNewsPage() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-
-  // Estados para los campos del formulario
+  
+  // Estados de datos
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [content, setContent] = useState('');
-  const [category, setCategory] = useState('Tecnologia'); // Categoría por defecto
-  const [imageFile, setImageFile] = useState(null); // Para el archivo de imagen
+  const [category, setCategory] = useState(''); 
+  const [imageFile, setImageFile] = useState(null); 
+  const [sections, setSections] = useState([]); // Secciones dinámicas
 
   // Estados de control
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Manejador para el archivo de imagen
+  // Cargar secciones dinámicamente (RF-08)
+  useEffect(() => {
+    const sectionsColRef = collection(db, 'sections');
+    const unsubscribe = onSnapshot(sectionsColRef, (snapshot) => {
+        const sectionsData = snapshot.docs.map(doc => doc.data().name);
+        setSections(sectionsData);
+        // Inicializa la categoría seleccionada
+        if (sectionsData.length > 0 && !category) {
+            setCategory(sectionsData[0]); 
+        }
+    }, (err) => {
+        setError("Error al cargar secciones: " + err.message);
+    });
+    return () => unsubscribe();
+  }, [category]); 
+
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
       setImageFile(e.target.files[0]);
@@ -41,28 +55,27 @@ function CreateNewsPage() {
     setError('');
 
     try {
-      // 1. Subir la imagen a Firebase Storage
+      // 1. Subir la imagen a Firebase Storage (RF-06)
       const storageRef = ref(storage, `news-images/${Date.now()}_${imageFile.name}`);
       await uploadBytes(storageRef, imageFile);
       const imageUrl = await getDownloadURL(storageRef);
 
-      // 2. Guardar la noticia en Firestore
+      // 2. Guardar la noticia en Firestore (RF-06)
       const newsCollectionRef = collection(db, 'news');
       await addDoc(newsCollectionRef, {
         title,
         subtitle,
         content,
         category,
-        imageUrl, // La URL de la imagen que subimos
-        author: currentUser.uid, // Guardamos el ID del autor
-        authorEmail: currentUser.email, // (Opcional) Guardamos el email
-        status: 'Edición', // Estado inicial según la rúbrica
+        imageUrl,
+        author: currentUser.uid, 
+        authorEmail: currentUser.email,
+        status: 'Edición', // Estado inicial (RF-07)
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
 
       setLoading(false);
-      // 3. Redirigir al dashboard
       navigate('/dashboard');
 
     } catch (err) {
@@ -73,61 +86,84 @@ function CreateNewsPage() {
   };
 
   return (
-    <div className="create-news-container">
-      <h2>Crear Nueva Noticia</h2>
-      <form onSubmit={handleSubmit} className="create-news-form">
-        
-        {error && <p className="error-message">{error}</p>}
+    <div className="form-page-container"> {/* <-- CLASE GLOBAL */}
+      <div className="form-card"> {/* <-- CLASE DEL CONTENEDOR DE LA TARJETA */}
+        <h2>Crear Nueva Noticia</h2>
+        <form onSubmit={handleSubmit} className="admin-form">
+          
+          {error && <p className="error-message">{error}</p>}
 
-        <div className="form-group">
-          <label htmlFor="title">Título:</label>
-          <input
-            id="title" type="text" value={title}
-            onChange={(e) => setTitle(e.target.value)} required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="subtitle">Subtítulo (Bajante):</label>
-          <input
-            id="subtitle" type="text" value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)} required
-          />
-        </div>
+          {/* Grupo: Título */}
+          <div className="form-group">
+            <label htmlFor="title">Título:</label>
+            <input
+              id="title" type="text" value={title}
+              onChange={(e) => setTitle(e.target.value)} required
+              className="form-input"
+            />
+          </div>
+          
+          {/* Grupo: Subtítulo */}
+          <div className="form-group">
+            <label htmlFor="subtitle">Subtítulo (Bajante):</label>
+            <input
+              id="subtitle" type="text" value={subtitle}
+              onChange={(e) => setSubtitle(e.target.value)} required
+              className="form-input"
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="category">Categoría:</label>
-          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)}>
-            {/* Aquí puedes añadir las categorías que pide la rúbrica */}
-            <option value="Tecnologia">Tecnología</option>
-            <option value="Deportes">Deportes</option>
-            <option value="Politica">Política</option>
-            <option value="Cultura">Cultura</option>
-          </select>
-        </div>
+          {/* Grupo: Categoría (Dinámica RF-10) */}
+          <div className="form-group">
+            <label htmlFor="category">Categoría:</label>
+            <select 
+              id="category" 
+              value={category} 
+              onChange={(e) => setCategory(e.target.value)}
+              className="form-input form-select"
+            >
+              {sections.length > 0 ? (
+                  sections.map(sec => (
+                      <option key={sec} value={sec}>{sec}</option>
+                  ))
+              ) : (
+                  <option value="" disabled>Cargando Secciones...</option>
+              )}
+            </select>
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="image">Imagen de Portada:</label>
-          <input
-            id="image" type="file"
-            onChange={handleImageChange} required
-            accept="image/*" // Solo aceptar imágenes
-          />
-        </div>
+          {/* Grupo: Imagen (RF-06) */}
+          <div className="form-group">
+            <label htmlFor="image">Imagen de Portada:</label>
+            <input
+              id="image" type="file"
+              onChange={handleImageChange} required
+              accept="image/*" 
+              className="form-input"
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="content">Contenido:</label>
-          <textarea
-            id="content" value={content}
-            onChange={(e) => setContent(e.target.value)} required
-            rows="10"
-          ></textarea>
-        </div>
+          {/* Grupo: Contenido */}
+          <div className="form-group">
+            <label htmlFor="content">Contenido:</label>
+            <textarea
+              id="content" value={content}
+              onChange={(e) => setContent(e.target.value)} required
+              rows="10"
+              className="form-input form-textarea"
+            ></textarea>
+          </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Guardando...' : 'Guardar Noticia (en Edición)'}
-        </button>
-      </form>
+          <button 
+            type="submit" 
+            disabled={loading}
+            className={`btn-primary btn-form-submit`}
+            style={{ opacity: loading ? 0.7 : 1 }}
+          >
+            {loading ? 'Guardando...' : 'Guardar Noticia (en Edición)'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

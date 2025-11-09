@@ -2,7 +2,7 @@
 
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext'; // <-- RUTA CORREGIDA
-import './ProtectedRoute.css'; // Importamos el CSS
+
 
 // Este componente recibirá "children", que son las rutas
 // que queremos proteger (en este caso, el Dashboard).

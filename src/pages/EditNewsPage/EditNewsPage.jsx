@@ -1,45 +1,57 @@
-// src/pages/EditNewsPage/EditNewsPage.jsx
-
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { storage, db } from '../../firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { useAuth } from '../../context/AuthContext';
-import './EditNewsPage.css';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { storage, db } from "../../firebase"; // Importación limpia
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  serverTimestamp,
+  onSnapshot,
+  collection,
+} from "firebase/firestore";
+import { useAuth } from "../../context/AuthContext"; // Importación limpia
+import "../CreateNewsPage/CreateNewsPage.css"; // <-- RUTA CORREGIDA para CSS
 
 function EditNewsPage() {
-  // Obtener el ID de la noticia desde la URL
-  const { id } = useParams(); 
+  const { id } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
-  // Estados del formulario y datos actuales
-  const [news, setNews] = useState(null); // Para la data original
-  const [title, setTitle] = useState('');
-  const [subtitle, setSubtitle] = useState('');
-  const [content, setContent] = useState('');
-  const [category, setCategory] = useState('');
-  const [imageFile, setImageFile] = useState(null); // Nueva imagen subida
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [news, setNews] = useState(null);
+  const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
+  const [content, setContent] = useState("");
+  const [category, setCategory] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [sections, setSections] = useState([]);
 
-  // 1. Efecto para Cargar la data original de la noticia
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Cargar datos y secciones
   useEffect(() => {
-    const fetchNews = async () => {
-      if (!currentUser) return;
+    if (!currentUser) return;
+    setLoading(true);
 
-      const docRef = doc(db, 'news', id);
+    const fetchNews = async () => {
+      const docRef = doc(db, "news", id);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         const data = docSnap.data();
-        
-        // **Validación de rol (Solo el autor puede editar)**
-        if (data.author !== currentUser.uid) {
-             setError("No tienes permiso para editar esta noticia.");
-             setLoading(false);
-             return;
+
+        // **VALIDACIÓN DE ROL: El Editor pasa este filtro, solo se bloquea al Reportero**
+        if (
+          data.author !== currentUser.uid &&
+          currentUser.role === "Reportero"
+        ) {
+          // El Reportero está intentando editar una noticia que no es suya.
+          setError(
+            "No tienes permiso para editar esta noticia. Solo el autor o un Editor pueden modificarla."
+          );
+          setLoading(false);
+          return;
         }
 
         setNews(data);
@@ -50,8 +62,17 @@ function EditNewsPage() {
       } else {
         setError("Noticia no encontrada.");
       }
+      setLoading(false);
     };
     fetchNews();
+
+    // Cargar secciones dinámicamente
+    const sectionsColRef = collection(db, "sections");
+    const unsubscribe = onSnapshot(sectionsColRef, (snapshot) => {
+      const sectionsData = snapshot.docs.map((doc) => doc.data().name);
+      setSections(sectionsData);
+    });
+    return () => unsubscribe();
   }, [id, currentUser]);
 
   const handleImageChange = (e) => {
@@ -63,19 +84,20 @@ function EditNewsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      let imageUrl = news.imageUrl; // Usar la URL antigua por defecto
+      let imageUrl = news.imageUrl;
 
-      // 2. Si se seleccionó una NUEVA IMAGEN, la subimos
       if (imageFile) {
-        const storageRef = ref(storage, `news-images/${Date.now()}_${imageFile.name}`);
+        const storageRef = ref(
+          storage,
+          `news-images/${Date.now()}_${imageFile.name}`
+        );
         await uploadBytes(storageRef, imageFile);
         imageUrl = await getDownloadURL(storageRef);
       }
 
-      // 3. Crear el objeto con la data actualizada
       const updatedData = {
         title,
         subtitle,
@@ -83,84 +105,146 @@ function EditNewsPage() {
         category,
         imageUrl,
         updatedAt: serverTimestamp(),
-        // El estado se mantiene como "Edición" al editar
-        status: news.status === 'Terminado' ? 'Edición' : news.status,
+        // Vuelve a 'Edición' si estaba Terminado (RF-07)
+        status: news.status === "Terminado" ? "Edición" : news.status,
       };
 
-      // 4. Actualizar el documento en Firestore
-      const docRef = doc(db, 'news', id);
+      const docRef = doc(db, "news", id);
       await updateDoc(docRef, updatedData);
 
       setLoading(false);
-      navigate('/dashboard'); // Volver al dashboard
+      navigate("/dashboard");
     } catch (err) {
-      setError('Error al actualizar la noticia: ' + err.message);
+      setError("Error al actualizar la noticia: " + err.message);
       setLoading(false);
       console.error(err);
     }
   };
 
-  if (error && error !== "No tienes permiso para editar esta noticia.") {
-    return <div className="loading-error">{error}</div>;
+  if (loading) {
+    return (
+      <div className="form-page-container loading-message">
+        Cargando formulario de edición...
+      </div>
+    );
   }
-  
-  // Mostrar formulario
-  return (
-    <div className="edit-news-container">
-      <h2>Editar Noticia: {title}</h2>
-      
-      {/* Mensaje de error de permiso */}
-      {error && error === "No tienes permiso para editar esta noticia." && (
-        <div className="permission-error">
-            <p>{error}</p>
-            <button onClick={() => navigate('/dashboard')}>Volver al Dashboard</button>
+
+  // Manejo de error de permisos
+  if (error) {
+    return (
+      <div className="form-page-container">
+        <div className="form-card">
+          <p className="error-message">{error}</p>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="btn-primary"
+          >
+            Volver al Dashboard
+          </button>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* Si la noticia no se ha cargado o hay un error de permiso, no mostrar el formulario */}
-      {news && !error && (
-        <form onSubmit={handleSubmit} className="edit-news-form">
-          {/* Aquí va el formulario similar al de Crear Noticia */}
-          
+  return (
+    <div className="form-page-container">
+      <div className="form-card">
+        <h2>Editar Noticia: {title}</h2>
+
+        <form onSubmit={handleSubmit} className="admin-form">
+          {error && <p className="error-message">{error}</p>}
+
+          {/* Grupo: Título */}
           <div className="form-group">
-            <label>Título:</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
-          </div>
-          
-          {/* ... otros campos: Subtítulo, Categoría, Contenido ... (usar el código de CreateNewsPage) */}
-          <div className="form-group">
-            <label>Subtítulo (Bajante):</label>
-            <input type="text" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} required />
+            <label htmlFor="title">Título:</label>
+            <input
+              id="title"
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="form-input"
+            />
           </div>
 
+          {/* Grupo: Subtítulo */}
           <div className="form-group">
-            <label>Categoría:</label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option value="Tecnologia">Tecnología</option>
-              <option value="Deportes">Deportes</option>
-              <option value="Politica">Política</option>
-              <option value="Cultura">Cultura</option>
+            <label htmlFor="subtitle">Subtítulo (Bajante):</label>
+            <input
+              id="subtitle"
+              type="text"
+              value={subtitle}
+              onChange={(e) => setSubtitle(e.target.value)}
+              required
+              className="form-input"
+            />
+          </div>
+
+          {/* Grupo: Categoría */}
+          <div className="form-group">
+            <label htmlFor="category">Categoría:</label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="form-input form-select"
+            >
+              {sections.length > 0 ? (
+                sections.map((sec) => (
+                  <option key={sec} value={sec}>
+                    {sec}
+                  </option>
+                ))
+              ) : (
+                <option value={category}>{category || "Sin Categoría"}</option>
+              )}
             </select>
           </div>
 
-          <div className="form-group">
-            <label>Contenido:</label>
-            <textarea value={content} onChange={(e) => setContent(e.target.value)} required rows="10" />
-          </div>
-          
           {/* Manejo de la imagen */}
-          <div className="form-group current-image">
+          <div className="form-group">
             <label>Imagen Actual:</label>
-            <img src={news.imageUrl} alt="Actual" width="100"/>
-            <input type="file" onChange={handleImageChange} accept="image/*" />
-            <small>Selecciona un archivo si quieres reemplazar la imagen actual.</small>
+            {news?.imageUrl && (
+              <img
+                src={news.imageUrl}
+                alt="Imagen Actual"
+                className="current-image-preview"
+              />
+            )}
+            <small>
+              Selecciona un archivo si quieres reemplazar la imagen actual.
+            </small>
+            <input
+              type="file"
+              onChange={handleImageChange}
+              accept="image/*"
+              className="form-input"
+            />
           </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Actualizando...' : 'Actualizar Noticia'}
+          {/* Grupo: Contenido */}
+          <div className="form-group">
+            <label htmlFor="content">Contenido:</label>
+            <textarea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+              rows="10"
+              className="form-input form-textarea"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`btn-primary btn-form-submit`}
+            style={{ opacity: loading ? 0.7 : 1 }}
+          >
+            {loading ? "Actualizando..." : "Actualizar Noticia"}
           </button>
         </form>
-      )}
+      </div>
     </div>
   );
 }

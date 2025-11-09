@@ -1,10 +1,8 @@
-// src/pages/NewsDetailPage/NewsDetailPage.jsx
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { db } from '../../firebase';
+import { db } from '../../firebase'; // Importación limpia
 import { doc, getDoc } from 'firebase/firestore';
-import './NewsDetailPage.css';
+import './NewsDetailPage.css'; // <-- Importa el estilo
 
 function NewsDetailPage() {
   const { id } = useParams(); // Obtener el ID de la URL
@@ -26,7 +24,7 @@ function NewsDetailPage() {
         if (docSnap.exists()) {
           const data = docSnap.data();
           
-          // CRUCIAL: Solo mostrar si el estado es 'Publicado' (RF-14 implícito)
+          // CRUCIAL: Solo mostrar si el estado es 'Publicado' (RF-14)
           if (data.status !== 'Publicado') {
             setError("La noticia solicitada no está disponible o no ha sido publicada.");
             setNews(null);
@@ -50,7 +48,14 @@ function NewsDetailPage() {
   }
 
   if (error) {
-    return <div className="news-detail-error">{error}</div>;
+    return (
+        <div className="news-detail-container">
+            <p className="news-detail-error">{error}</p>
+            <button onClick={() => navigate('/')} className="back-button">
+                &larr; Volver al Portal
+            </button>
+        </div>
+    );
   }
   
   // Si todo es correcto, mostramos la noticia
@@ -68,8 +73,7 @@ function NewsDetailPage() {
         <div className="article-meta">
           <span>Categoría: <strong>{news.category}</strong></span>
           <span>Autor: {news.authorEmail}</span>
-          {/* El tiempo debe ser formateado, pero por ahora mostramos el objeto */}
-          <span>Publicado en: {news.createdAt?.toDate().toLocaleDateString()}</span> 
+          <span>Publicado: {news.createdAt?.toDate().toLocaleDateString()}</span> 
         </div>
         
         <p className="article-content">{news.content}</p>
