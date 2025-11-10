@@ -1,78 +1,84 @@
+/* Contenedor principal de cada noticia - estilo light */
 .news-item {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #eee;
+    background-color: #ffffff; /* fondo claro */
+    border: 2px solid #000000; /* borde oscuro */
+    border-radius: 0; /* bordes rectos */
     display: flex;
     align-items: flex-start;
+    padding: 15px;
     margin-bottom: 15px;
     gap: 20px;
-    transition: box-shadow 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    font-family: 'IBM Plex Mono', monospace;
 }
 
+/* Hover elegante */
 .news-item:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
+/* Imagen de la noticia */
 .news-item-image {
     width: 120px;
     height: 90px;
     object-fit: cover;
-    border-radius: 4px;
     flex-shrink: 0;
+    background-color: #fff;
+    border: 1px solid #000;
 }
 
+/* Contenido textual */
 .news-item-content {
     flex-grow: 1;
+    color: #000000; /* texto oscuro */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .news-item-content h3 {
-    margin-top: 0;
-    font-size: 18px;
-    color: #1a4f8d;
-    margin-bottom: 5px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #111111;
 }
 
 .news-item-content p {
-    margin: 3px 0;
+    margin: 0;
     font-size: 13px;
-    color: #777;
+    color: #555555; /* gris medio para descripción */
 }
 
-/* Indicadores de Estado */
+/* Indicadores de estado */
 .news-item-content .status-tag {
     display: inline-block;
     padding: 4px 10px;
-    border-radius: 12px;
+    border-radius: 0;
     font-size: 12px;
     font-weight: bold;
     margin-top: 5px;
+    color: #fff;
 }
 
-/* Colores de Estado (CRUCIAL PARA LA RÚBRICA) */
+/* Colores de estado adaptados al light */
 .status-Edición {
-    background-color: #fff3cd;
-    color: #856404;
+    background-color: #b0b0b0;
 }
-
 .status-Terminado {
-    background-color: #d1ecf1;
-    color: #0c5460;
+    background-color: #999999;
 }
-
 .status-Publicado {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: #777777;
 }
-
 .status-Desactivado {
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: #555555;
 }
 
-/* Botones de Acción (Editar, Publicar, Eliminar) */
+/* Botones de acción */
 .news-actions {
-    margin-top: 15px;
+    margin-top: 10px;
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
@@ -82,33 +88,21 @@
     text-decoration: none;
     font-size: 12px;
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 0;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s, opacity 0.2s;
-    border: 1px solid transparent;
+    border: 1px solid #000;
+    background-color: #ffffff;
+    color: #000000;
 }
 
-/* Estilos de botones específicos */
-.edit, .edit-editor { background-color: #007bff; color: white; }
-.edit:hover, .edit-editor:hover { background-color: #0056b3; }
+/* Hover de botones */
+.action-link:hover, .action-button:hover {
+    background-color: #e0e0e0;
+}
 
-.finish { background-color: #ffc107; color: #333; border-color: #ffc107; }
-.finish:hover { background-color: #e0a800; }
-
-.publish { background-color: #28a745; color: white; }
-.publish:hover { background-color: #1e7e34; }
-
-.deactivate { background-color: #6c757d; color: white; }
-.deactivate:hover { background-color: #5a6268; }
-
-.edit-back { background-color: #17a2b8; color: white; }
-.edit-back:hover { background-color: #138496; }
-
-.delete, .delete-editor { background-color: #dc3545; color: white; }
-.delete:hover, .delete-editor:hover { background-color: #c82333; }
-
-/* Responsividad para la lista */
+/* Responsividad para móvil */
 @media (max-width: 600px) {
     .news-item {
         flex-direction: column;

@@ -8,13 +8,13 @@
 .form-card {
     background-color: white;
     padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 2px solid #000000;
+
 }
 
 .form-card h2 {
     font-size: 24px;
-    color: #1a4f8d;
+    color: #000000;
     border-bottom: 2px solid #eee;
     padding-bottom: 10px;
     margin-bottom: 25px;
@@ -34,7 +34,9 @@
 }
 
 /* Campos de entrada genéricos (input, select, textarea) */
-.form-input, .form-select, .form-textarea {
+.form-input,
+.form-select,
+.form-textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -45,7 +47,9 @@
     background-color: #fff;
 }
 
-.form-input:focus, .form-select:focus, .form-textarea:focus {
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
     outline: none;

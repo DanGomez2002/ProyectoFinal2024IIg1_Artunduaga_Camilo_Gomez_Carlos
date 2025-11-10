@@ -1,28 +1,34 @@
+/* Contenedor general */
 .auth-page-container {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 40px 15px;
-    min-height: calc(100vh - 120px); /* Ajuste para Navbar y Footer */
+    min-height: calc(100vh - 120px);
+    background-color: #f9f9f9; /* Fondo claro */
 }
 
+/* Tarjeta principal del login */
 .auth-form-card {
-    background-color: white;
+    background-color: #fff;
     padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 0; /* Bordes cuadrados */
+    border: 2px solid #000; /* Bordes negros */
+    color: #000;
     width: 100%;
     max-width: 400px;
 }
 
+/* Título centrado */
 .auth-form-card h2 {
     text-align: center;
-    color: #333;
+    color: #000;
     margin-bottom: 25px;
     font-size: 24px;
     font-weight: 700;
 }
 
+/* Campos del formulario */
 .form-group {
     margin-bottom: 20px;
 }
@@ -31,50 +37,63 @@
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color: #555;
+    color: #000;
     font-size: 14px;
 }
 
-.auth-input, .auth-select {
+/* Inputs y selects */
+.auth-input,
+.auth-select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    border: 1px solid #000;
+    border-radius: 0; /* Bordes cuadrados */
+    background-color: #fff;
+    color: #000;
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.auth-input:focus, .auth-select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+.auth-input:focus,
+.auth-select:focus {
+    border-color: #000;
     outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
 
+/* Botón principal */
 .btn-auth-submit {
     width: 100%;
     padding: 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #000;
+    border-radius: 0;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
 }
 
 .btn-auth-submit:hover {
-    background-color: #0056b3;
+    background-color: #333;
+    border-color: #333;
 }
 
+/* Enlace de alternancia (login/registro) */
 .auth-toggle-link {
     display: block;
     text-align: center;
     margin-top: 15px;
     font-size: 14px;
+    color: #000;
 }
 
 .auth-toggle-link a {
-    color: #007bff;
+    color: #333;
     text-decoration: none;
+}
+
+.auth-toggle-link a:hover {
+    text-decoration: underline;
 }

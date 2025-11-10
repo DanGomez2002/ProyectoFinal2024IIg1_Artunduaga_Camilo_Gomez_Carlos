@@ -1,74 +1,184 @@
+/* 🎨 VARIABLES GLOBALES */
+:root {
+    --background-color: #ffffff;
+    --primary-color: #000000;
+    --text-color: #222;
+    --muted-text: #555;
+    --hover-bg: #e6f0ff;
+    --danger-color: #000000;
+}
+
+/* 🧭 NAVBAR PRINCIPAL */
 .navbar-main {
-    background-color: #ffffff;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-    padding: 10px 0;
+    background-color: var(--background-color);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+    padding: 12px 0;
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* 📦 CONTENEDOR CENTRAL */
 .navbar-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
 }
 
+/* ✳️ MARCA PRINCIPAL */
 .navbar-link-brand {
-    font-size: 24px;
-    font-weight: 700;
-    color: #007bff;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--primary-color);
     text-decoration: none;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
+.navbar-link-brand:hover {
+    color: #636262;
+    text-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+/* 🧭 LINKS Y ACCIONES */
 .navbar-links-actions {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-.navbar-link, .dashboard-role {
+.navbar-link,
+.dashboard-role {
+    font-family: 'IBM Plex Mono', monospace;
     text-decoration: none;
-    color: #555;
-    padding: 8px 10px;
-    border-radius: 4px;
-    transition: color 0.2s;
-    font-size: 14px;
+    color: var(--muted-text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
 }
 
 .navbar-link:hover {
-    color: #007bff;
+    color: var(--primary-color);
+    background-color: var(--hover-bg);
 }
 
-/* Botones de Auth */
+/* 🔘 BOTONES DE AUTENTICACIÓN */
+.navbar-button-register,
 .navbar-button-logout {
-    background-color: #dc3545;
-    color: white;
-    padding: 8px 15px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 8px 16px;
     border: none;
-    border-radius: 6px;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
 }
 
+/* Registro / Login */
 .navbar-button-register {
-    background-color: #007bff;
+    background-color: var(--primary-color);
     color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
 }
 
+.navbar-button-register:hover {
+    background-color: #4b4c4d;
+    transform: scale(1.03);
+}
+
+/* Logout */
+.navbar-button-logout {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.navbar-button-logout:hover {
+    background-color: #686767;
+    transform: scale(1.03);
+}
+
+/* ⚓️ NAVBAR RESPONSIVO */
+@media (max-width: 992px) {
+    .navbar-container {
+        padding: 0 15px;
+    }
+
+    .navbar-link-brand {
+        font-size: 1.4rem;
+    }
+
+    .navbar-links-actions {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        text-align: center;
+    }
+
+    .navbar-link-brand {
+        font-size: 1.3rem;
+    }
+
+    .navbar-links-actions {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .navbar-link,
+    .navbar-button-register,
+    .navbar-button-logout {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-main {
+        padding: 10px 0;
+    }
+
+    .navbar-link-brand {
+        font-size: 1.2rem;
+    }
+
+    .navbar-links-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .navbar-link {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+}
+
+/* 🦶 FOOTER */
 .footer-main {
-    background-color: #333;
-    color: #ccc;
+    background-color: #f0f0f0;
+    color: #555;
     text-align: center;
     padding: 15px;
-    font-size: 12px;
-}   
+    font-size: 0.85rem;
+    border-top: 1px solid #ddd;
+}
+
+@media (max-width: 576px) {
+    .footer-main {
+        font-size: 0.8rem;
+        padding: 12px;
+    }
+}

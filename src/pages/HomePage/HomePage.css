@@ -1,94 +1,139 @@
-/* Estilos para la barra de filtro */
-.filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 30px;
-    padding: 10px 0;
-    border-bottom: 2px solid #ddd;
+/* Fuente global: IBM Plex Mono */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@200;300;400&display=swap');
+
+/* Contenedor principal de la página de inicio */
+.home-page-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 15px;
+    font-family: 'IBM Plex Mono', monospace;
+    background-color: #ffffff; /* 🔁 invertido */
+    color: #ffffff;
 }
 
-.filter-button {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    padding: 8px 15px;
-    cursor: pointer;
-    border-radius: 20px;
-    transition: background-color 0.2s, border-color 0.2s;
-    font-size: 14px;
-}
-
-.filter-button:hover {
-    background-color: #e0e0e0;
-}
-
-.filter-button.active {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-    font-weight: bold;
-}
-
-/* Estilos para el título del portal */
-.portal-title {
+/* Título principal */
+.home-page-container h1 {
     text-align: center;
-    color: #1a4f8d;
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-}
-
-/* Estilos para las secciones */
-.news-section {
+    font-weight: 400;
+    color: #000000;
+    border-bottom: 2px solid #ffffff; /* 🔁 invertido */
+    padding-bottom: 10px;
     margin-bottom: 40px;
 }
 
-.section-title {
-    color: #007bff;
-    font-size: 1.8rem;
-    border-left: 5px solid #007bff;
-    padding-left: 10px;
-    margin-bottom: 20px;
+/* Sección de Noticias por Categoría */
+.news-section {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: #ffffff; /* 🔁 invertido */
+    border: 2px solid #000000;
+    border-radius: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
-/* Contenedor flexible para las tarjetas de noticias */
-.section-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px; /* Espacio entre tarjetas */
-    justify-content: flex-start;
-}
-
-.no-results {
+/* Encabezado de cada categoría */
+.news-section h2 {
+    font-size: 24px;
+    color: #000000; /* 🔁 invertido */
+    margin-top: 0;
+    margin-bottom: 25px;
     text-align: center;
-    color: #777;
-    padding: 40px;
-    font-size: 1.1rem;
+    border-left: none;
+    padding-left: 0;
+    font-weight: 300;
 }
-.search-bar {
+
+/* Grid de Noticias (Responsivo) */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 25px; 
+}
+
+/* Tarjeta de Noticia */
+.news-card {
+    background-color: #ffffff; /* 🔁 invertido */
+    border: 2px solid #000000; /* 🔁 invertido */
+    border-radius: 0;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Efecto hover */
+.news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 🔁 invertido */
+}
+
+/* Contenedor de imagen */
+.news-card-image-container { 
+    width: 100%;
+    height: 180px; 
+    overflow: hidden;
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    align-items: center;
+    background-color: #fff;
 }
 
-.search-input {
-    width: 100%;
-    max-width: 600px;
-    padding: 10px 15px;
-    border: 2px solid #ccc;
-    border-radius: 25px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
+/* Imagen (sin línea inferior) */
+.news-card-image { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    object-position: center; 
+    border-bottom: none;
 }
 
-.search-input:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+/* Contenido de la tarjeta */
+.news-card-content {
+    padding: 15px;
+    flex-grow: 1;
 }
 
-/* Ajuste al contenedor principal para centrar */
-.homepage-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+.news-card-content h3 {
+    font-size: 18px;
+    color: #000000; /* 🔁 invertido */
+    margin-bottom: 10px;
+}
+
+.news-card-content p {
+    color: #333333; /* 🔁 invertido */
+    flex-grow: 1;
+    margin-bottom: 15px;
+}
+
+/* Enlace "Leer más" */
+.read-more-link {
+    text-decoration: none;
+    color: #000000; /* 🔁 invertido */
+    font-weight: 300;
+    padding-top: 8px;
+    display: inline-block;
+    transition: color 0.2s;
+}
+
+.read-more-link:hover {
+    color: #555555;
+}
+
+/* Mensaje cuando no hay noticias */
+.no-news-message {
+    text-align: center;
+    color: #555555; /* 🔁 invertido */
+    font-style: italic;
+    margin-top: 50px;
+}
+
+/* Título global */
+h1 {
+    font-weight: 500;
+    font-size: 2.2rem;
+    margin: 0 0 1.5rem 0;
+    color: #ffffff; /* 🔁 invertido */
+    line-height: 1.2;
+    text-align: center;
 }

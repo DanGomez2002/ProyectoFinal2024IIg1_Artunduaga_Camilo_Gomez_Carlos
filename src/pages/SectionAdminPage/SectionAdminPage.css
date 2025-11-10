@@ -1,66 +1,103 @@
-/* Este archivo funciona junto con las clases de formulario definidas globalmente 
-   (como .form-page-container y .form-card) para mantener la coherencia. */
-
-/* Estilos para el listado de secciones */
+/* === LISTADO DE SECCIONES (Estilo Light Unificado) === */
 .sections-list {
     list-style: none;
     padding: 0;
     margin-top: 30px;
-    border-top: 1px solid #eee;
+    border-top: 2px solid #000000; /* Línea superior oscura */
+    font-family: 'IBM Plex Mono', monospace;
 }
 
+/* === ITEM DE SECCIÓN === */
 .section-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 2px solid #000000; /* Línea divisoria negra */
     font-size: 16px;
+    background-color: #ffffff; /* Fondo claro */
+    color: #111111; /* Texto oscuro */
 }
 
 .section-item span {
-    font-weight: 500;
-    color: #333;
+    font-weight: 600;
+    color: #000000;
 }
 
-/* Botón de eliminación */
+/* === BOTÓN DE ELIMINACIÓN === */
 .delete-section-button {
-    background-color: #f44336; /* Rojo */
-    color: white;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
+    background-color: #ffffff;
+    color: #000000;
+    padding: 8px 14px;
+    border: 2px solid #000000;
+    border-radius: 0;
     cursor: pointer;
     font-size: 13px;
-    transition: background-color 0.2s;
+    font-weight: bold;
+    transition: all 0.2s;
 }
 
 .delete-section-button:hover {
-    background-color: #d32f2f;
+    background-color: #dc3545; /* Rojo de alerta */
+    color: #ffffff;
+    border-color: #000000;
 }
 
-/* Estilo para el formulario de agregar sección (Crea la clase .add-section-form en el JSX) */
+/* === FORMULARIO PARA AGREGAR SECCIÓN === */
 .add-section-form {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    margin-top: 15px;
 }
 
 .add-section-form .form-input {
-    flex-grow: 1; /* Permite que el input ocupe el espacio restante */
+    flex-grow: 1;
+    border: 2px solid #000000;
+    border-radius: 0;
+    background-color: #ffffff;
+    color: #000000;
+    font-family: 'IBM Plex Mono', monospace;
 }
 
+.add-section-form .form-input:focus {
+    border-color: #000000; /* Verde acento */
+    outline: none;
+}
+
+/* === BOTÓN DE AGREGAR SECCIÓN === */
 .add-section-form button {
-    background-color: #1a4f8d; /* Azul corporativo */
-    color: white;
+    background-color: #000000; /* Verde acento */
+    color: #ffffff;
     padding: 10px 15px;
-    border: none;
-    border-radius: 6px;
+    border: 2px solid #000000;
+    border-radius: 0;
     cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.2s;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: all 0.2s;
 }
 
 .add-section-form button:hover {
-    background-color: #113c6b;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/* === RESPONSIVIDAD === */
+@media (max-width: 600px) {
+    .section-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .add-section-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .add-section-form button {
+        width: 100%;
+        text-align: center;
+    }
 }

@@ -1,52 +1,206 @@
-/* ⬅️ NUEVA REGLA: Obliga a HTML y BODY a tomar el 100% del alto de la ventana */
+/* 🎨 VARIABLES GLOBALES (versión light) */
+:root {
+    --background-color: #ffffff; /* Fondo claro suave */
+    --primary-color: #0a0a0a; /* Texto principal oscuro */
+    --text-color: #222222; /* Texto general */
+    --accent-color: #000000; /* Azul elegante para botones o detalles */
+}
+
+/* 🌐 ESTRUCTURA GLOBAL */
 html, body {
     height: 100%;
 }
 
-/* Reseteo y Estilos Globales */
 body {
+    min-height: 100vh;
     margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f7f9; /* Fondo muy claro */
-    color: #333;
-    line-height: 1.6;
+    font-family: 'IBM Plex Mono', monospace;
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
 
-/* #root: Ahora que body tiene 100% de altura, #root puede usar min-height: 100vh para pegarse al fondo. */
-#root {
-    min-height: 100vh; /* Ocupa el 100% del alto de la pantalla */
+/* 📐 LAYOUT DE PANTALLA COMPLETA */
+body.fullscreen-layout {
+    height: 100vh;
     display: flex;
-    flex-direction: column; /* Organiza Navbar, Main, Footer verticalmente */
+    flex-direction: column;
+    overflow: hidden;
 }
 
-/* Utilidad para el pie de página */
-.flex-grow-main {
-    flex-grow: 1; /* Hace que el <main> ocupe todo el espacio vertical disponible, empujando el footer. */
+/* 🧭 HEADER */
+header {
+    height: 6rem;
+    display: flex;
+    position: sticky;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    top: 0;
+    z-index: 1000;
 }
 
-/* Estilo para los botones de acción generales (Editar, Crear) */
-.btn-primary {
-    background-color: #007bff;
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 6px;
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 97%;
+    height: 65%;
+    background-color: #ffffff;
+    padding-right: 0.6rem;
+    padding-left: 1rem;
+    border-radius: 8px;
+}
+
+/* 🌈 LOGO Y NAVBAR */
+.logo {
+    text-decoration: none;
+    color: #444;
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
-.btn-primary:hover {
-    background-color: #0056b3;
+.logo:hover {
+    color: var(--accent-color);
+    text-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
 }
 
-/* Utilidad para mensajes de error (usada en Login/Registro/Formularios) */
-.error-message {
-    color: #d9534f;
-    background-color: #fbe6e6;
-    border: 1px solid #d9534f;
-    padding: 10px;
+.navbar .nav-link {
+    color: #333 !important;
+}
+
+.navbar-dark .navbar-toggler {
+    border-color: #333;
+}
+
+.navbar-dark .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%280, 0, 0, 1%29)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* 🧱 CONTENIDO PRINCIPAL */
+body.fullscreen-layout main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.content-area {
+    padding-left: 2.25%;
+    padding-right: 2.25%;
+}
+
+/* 📍 MIGAS DE PAN */
+.breadcrumb {
+    color: #555;
+}
+
+/* 🪄 BOTONES INTERACTIVOS */
+.btn-flip {
+    opacity: 1;
+    outline: 0;
+    line-height: 40px;
+    position: relative;
+    text-align: center;
+    letter-spacing: 1px;
+    display: inline-block;
+    text-decoration: none;
+    text-transform: uppercase;
+    transform-style: preserve-3d;
+    perspective: 280px;
+}
+
+.btn-flip::before {
+    content: attr(data-front);
+    position: relative;
+    display: block;
+    padding: 0 30px;
+    line-height: 40px;
+    background: var(--primary-color);
+    color: #ffffff;
+    transform: translateY(0) rotateX(0);
+    opacity: 1;
+    transition: all 0.5s ease;
     border-radius: 4px;
-    margin-bottom: 15px;
+}
+
+.btn-flip::after {
+    content: attr(data-back);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    transform: translateY(-50%) rotateX(90deg);
+    opacity: 0;
+    transition: all 0.5s ease;
+    border-radius: 4px;
+}
+
+.btn-flip:hover::before {
+    transform: translateY(50%) rotateX(-90deg);
+    opacity: 0;
+}
+
+.btn-flip:hover::after {
+    transform: translateY(0) rotateX(0);
+    opacity: 1;
+}
+
+/* 🏷️ TITULOS Y TEXTOS */
+.title-container {
+    text-align: left;
+    padding-left: 2.5rem;
+}
+
+.main-content {
+    text-align: left;
+    color: var(--text-color);
+    padding-left: 2.5rem;
+}
+
+.action-bar {
+    padding: 1.5rem 2.5rem;
+}
+
+h1 {
+    font-weight: 400;
+    font-size: 6rem;
+    margin: 0;
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+.main-title {
+    font-size: 3em;
+    font-weight: 400;
+    color: var(--primary-color);
+    line-height: 1.4;
+    margin: 0;
+}
+
+p {
+    font-size: 1rem;
+    font-weight: 400;
+    text-transform: none;
+    margin: 1rem 0 0 0;
+}
+
+/* 🧩 BOTONES SIMPLES */
+.button {
+    font-weight: 300;
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--accent-color);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #0056b3;
 }
