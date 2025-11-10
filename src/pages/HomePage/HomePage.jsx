@@ -1,97 +1,124 @@
-import { useState, useEffect } from "react";
-import { db } from "../../firebase"; // Importación limpia
-import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { Link } from "react-router-dom";
-import "./HomePage.css"; // Asegúrate de que este archivo exista
+import { useState, useEffect } from 'react';
+import { db } from '../../firebase.js';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import NewsCard from '../../components/NewsCard/NewsCard.jsx'; 
+import './HomePage.css'; 
 
 function HomePage() {
-  const [news, setNews] = useState({}); // Cambiado a objeto para agrupar por categoría
-  const [loading, setLoading] = useState(true);
+    const [allNews, setAllNews] = useState({}); 
+    const [sections, setSections] = useState([]); 
+    const [selectedSection, setSelectedSection] = useState('Todas'); 
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  useEffect(() => {
-    setLoading(true);
-    const newsCollectionRef = collection(db, "news");
+    // --- 1. Obtener todas las secciones disponibles ---
+    useEffect(() => {
+        const sectionsColRef = collection(db, 'sections');
+        const unsubscribe = onSnapshot(sectionsColRef, (snapshot) => {
+            const sectionsData = snapshot.docs.map(doc => doc.data().name);
+            setSections(['Todas', ...sectionsData]); 
+        }, (err) => {
+            setError("Error al cargar las secciones.");
+            console.error("Error al cargar secciones:", err);
+        });
+        return () => unsubscribe();
+    }, []);
 
-    // Consulta CLAVE: Solo traer noticias con status == 'Publicado' (RF-14)
-    const q = query(newsCollectionRef, where("status", "==", "Publicado"));
+    // --- 2. Obtener y filtrar noticias ---
+    useEffect(() => {
+        if (sections.length === 0 && !error) return; 
 
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        // Mapeamos los datos y los agrupamos por categoría
-        const groupedNews = snapshot.docs.reduce((acc, doc) => {
-          const item = { id: doc.id, ...doc.data() };
-          const category = item.category || "Sin Categoría";
+        setLoading(true);
+        setError(null);
 
-          if (!acc[category]) {
-            acc[category] = [];
-          }
-          acc[category].push(item);
-          return acc;
-        }, {});
+        const newsCollectionRef = collection(db, 'news');
+        let q;
 
-        setNews(groupedNews);
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Error al obtener noticias públicas:", error);
-        setLoading(false);
-      }
-    );
+        q = query(newsCollectionRef, where('status', '==', 'Publicado'));
 
-    return () => unsubscribe();
-  }, []);
+        if (selectedSection !== 'Todas') {
+            q = query(q, where('category', '==', selectedSection));
+        }
+        
 
-  if (loading) {
-    return (
-      <div className="home-page-container">
-        <p className="no-news-message">Cargando el portal de noticias...</p>
-      </div>
-    );
-  }
+        const unsubscribe = onSnapshot(q, 
+            (snapshot) => {
+                const newsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                const grouped = {};
+                if (selectedSection === 'Todas') {
+                    sections.filter(s => s !== 'Todas').forEach(sec => {
+                        grouped[sec] = newsData.filter(n => n.category === sec);
+                    });
+                } else {
+                    grouped[selectedSection] = newsData;
+                }
 
-  return (
-    <div className="home-page-container">
-      <h1>Portal de Noticias Corporativas</h1>
+                setAllNews(grouped);
+                setLoading(false);
+            },
+            (err) => {
+                setError("Error al cargar las noticias. Revisa las reglas de Firestore.");
+                setLoading(false);
+                console.error("Error al obtener noticias:", err);
+            }
+        );
 
-      {/* Mapeamos el objeto de noticias agrupadas */}
-      {Object.entries(news).map(([category, newsList]) => (
-        <section key={category} className="news-section">
-          <h2>{category}</h2>
+        return () => unsubscribe();
+    }, [sections, selectedSection]); 
 
-          {/* news-grid activa la distribución de 4 columnas (CSS) */}
-          <div className="news-grid">
-            {newsList.map((item) => (
-              <div key={item.id} className="news-card">
-                {/* Contenedor corregido para que la imagen no se estire */}
-                <div className="news-card-image-container">
-                  <img
-                    src={item.imageUrl}
-                    alt={item.title}
-                    className="news-card-image"
-                  />
-                </div>
+    if (loading) {
+        return <div className="loading-message">Cargando noticias y secciones...</div>;
+    }
 
-                <div className="news-card-content">
-                  <h3>{item.title}</h3>
-                  <p>{item.subtitle}</p>
-                  <Link to={`/noticia/${item.id}`} className="read-more-link">
-                    Leer más &rarr;
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
+    if (error) {
+        return <div className="error-message">{error}</div>;
+    }
 
-      {Object.keys(news).length === 0 && (
-        <p className="no-news-message">
-          Aún no hay noticias publicadas. ¡Pide a tu Editor que publique una!
-        </p>
-      )}
-    </div>
-  );
+    return (
+        <div className="homepage-container">
+            <h1 className="portal-title">Portal de Noticias Corporativas</h1>
+            <div className="filter-bar">
+                {sections.map(section => (
+                    <button
+                        key={section}
+                        onClick={() => setSelectedSection(section)}
+                        className={`filter-button ${selectedSection === section ? 'active' : ''}`}
+                    >
+                        {section}
+                    </button>
+                ))}
+            </div>
+
+            <div className="news-content">
+                {/* Itera sobre los grupos (secciones) */}
+                {Object.keys(allNews).map(sectionName => {
+                    const newsInSection = allNews[sectionName];
+                    
+                    if (newsInSection.length === 0) {
+                        return null; 
+                    }
+
+                    return (
+                        <section key={sectionName} className="news-section">
+                            <h2 className="section-title">{sectionName}</h2>
+                            <div className="section-list">
+                                {/* Muestra las tarjetas de noticias */}
+                                {newsInSection.map(newsItem => (
+                                    <NewsCard key={newsItem.id} news={newsItem} />
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })}
+                
+                {/* Manejar el caso de que el filtro activo no tenga noticias */}
+                {Object.keys(allNews).length === 0 && selectedSection !== 'Todas' && (
+                    <p className="no-results">No hay noticias publicadas en la sección "{selectedSection}" en este momento.</p>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export default HomePage;
