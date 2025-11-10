@@ -5,10 +5,16 @@
 .home-page-container {
     max-width: 1200px;
     margin: 30px auto;
-    padding: 0 15px;
+    padding: 30px 15px;
+    /* Aumentamos el padding para el borde */
     font-family: 'IBM Plex Mono', monospace;
     background-color: #ffffff;
-    /* 🔁 invertido */
+
+    /* 🟢 Borde de alto contraste para la caja principal */
+    border: 2px solid #000000;
+    box-shadow: 4px 4px 0 #000000;
+    border-radius: 0;
+
     color: #ffffff;
 }
 
@@ -23,7 +29,7 @@
     margin-bottom: 40px;
 }
 
-/* === ESTILOS DE FILTROS AÑADIDOS/AJUSTADOS === */
+/* === ESTILOS DE FILTROS (ALTO CONTRASTE) === */
 
 .search-bar {
     margin-bottom: 20px;
@@ -94,17 +100,19 @@
     box-shadow: none;
 }
 
-/* === RESTO DE ESTILOS ORIGINALES === */
+/* === SECCIONES Y TARJETAS (CENTRADO Y ALTO CONTRASTE) === */
 
 /* Sección de Noticias por Categoría */
 .news-section {
+    /* Eliminamos el borde de aquí, ya que el contenedor principal lo tiene */
     margin-bottom: 40px;
-    padding: 20px;
-    background-color: #ffffff;
-    /* 🔁 invertido */
-    border: 2px solid #000000;
+    padding: 20px 0;
+    /* Ajustamos padding si el contenedor principal ya tiene */
+    background-color: transparent;
+    /* Fondo transparente para que use el fondo del contenedor principal */
+    border: none;
     border-radius: 0;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    box-shadow: none;
 }
 
 /* Encabezado de cada categoría */
@@ -120,15 +128,20 @@
     font-weight: 300;
 }
 
-/* Grid de Noticias (Responsivo) */
+/* 🟢 Grid de Noticias (Centrado) */
 .news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* Centra las tarjetas horizontalmente */
     gap: 25px;
 }
 
 /* Tarjeta de Noticia */
 .news-card {
+    width: 300px;
+    /* Ancho fijo para el centrado */
+    max-width: 100%;
     background-color: #ffffff;
     /* 🔁 invertido */
     border: 2px solid #000000;
@@ -183,16 +196,17 @@
 
 .news-card-content p {
     color: #333333;
-    /* 🔁 invertido */
+    /* Color actual del subtítulo: Gris Oscuro */
     flex-grow: 1;
     margin-bottom: 15px;
 }
 
-/* Enlace "Leer más" */
+/* Enlace "Leer más" - CORREGIDO (Sin subrayado, color gris) */
 .read-more-link {
     text-decoration: none;
-    color: #000000;
-    /* 🔁 invertido */
+    /* <--- Quita el subrayado */
+    color: #333333;
+    /* <--- Color Gris Oscuro del subtítulo */
     font-weight: 300;
     padding-top: 8px;
     display: inline-block;
@@ -200,7 +214,9 @@
 }
 
 .read-more-link:hover {
-    color: #555555;
+    color: #000000;
+    /* Negro puro al pasar el ratón */
+    text-decoration: none;
 }
 
 /* Mensaje cuando no hay noticias */
