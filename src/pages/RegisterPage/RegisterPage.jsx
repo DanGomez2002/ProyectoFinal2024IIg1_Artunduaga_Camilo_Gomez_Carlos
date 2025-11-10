@@ -1,54 +1,73 @@
-import { useState } from "react";
-import { useAuth } from "../../context/AuthContext.jsx"; // Asegura la extensión .jsx
-import { useNavigate, Link } from "react-router-dom";
-import "./RegisterPage.css"; // Asegúrate de que este archivo exista
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext.jsx'; 
+import './RegisterPage.css'; // Asegúrate de que el CSS exista
 
 function RegisterPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Reportero"); // Valor por defecto
-  const [error, setError] = useState("");
-
-  const { signup } = useAuth();
+  const [name, setName] = useState(''); // Estado para el nombre
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('Reportero'); // Valor por defecto
+  const [error, setError] = useState('');
+  
+  const { signup } = useAuth(); // Obtenemos la función de registro
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
-    // Validación simple de contraseña
     if (password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres.");
+      setError('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
 
     try {
-      // Llama a la función de registro del context (RF-01, RF-03)
-      await signup(email, password, role);
-
-      // Si todo sale bien, lo manda al Dashboard (RF-04)
-      navigate("/dashboard");
+      // Pasamos 'name' como el cuarto argumento
+      await signup(email, password, role, name); 
+      navigate('/dashboard');
     } catch (err) {
-      if (err.code === "auth/email-already-in-use") {
-        setError("Este correo electrónico ya está en uso.");
-      } else if (err.code === "auth/invalid-email") {
-        setError("El formato del correo no es válido.");
+      if (err.code === 'auth/email-already-in-use') {
+        setError('Este correo electrónico ya está en uso.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('El formato del correo no es válido.');
       } else {
-        setError("Error al crear la cuenta. Inténtalo de nuevo.");
+        setError('Error al crear la cuenta. Inténtalo de nuevo.');
       }
       console.error(err);
     }
   };
 
   return (
+    // Usamos las clases de CSS Puro que definimos en Auth.css
     <div className="auth-page-container">
       <div className="auth-form-card">
-        <h2>Registro de Usuario</h2>
+        <h2 className="auth-title">Crear Cuenta</h2>
+        
         <form onSubmit={handleSubmit} className="auth-form">
-          {error && <p className="error-message">{error}</p>}
+          
+          {error && (
+            <p className="error-message">
+              {error}
+            </p>
+          )}
 
+          {/* CAMPO "NOMBRE" AÑADIDO */}
           <div className="form-group">
-            <label htmlFor="email">Email:</label>
+            <label htmlFor="name" className="form-label">Nombre Completo</label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="auth-input"
+            />
+          </div>
+          
+          {/* Campo de Email */}
+          <div className="form-group">
+            <label htmlFor="email" className="form-label">Email</label>
             <input
               id="email"
               type="email"
@@ -58,9 +77,10 @@ function RegisterPage() {
               className="auth-input"
             />
           </div>
-
+          
+          {/* Campo de Contraseña */}
           <div className="form-group">
-            <label htmlFor="password">Contraseña:</label>
+            <label htmlFor="password" className="form-label">Contraseña</label>
             <input
               id="password"
               type="password"
@@ -71,9 +91,9 @@ function RegisterPage() {
             />
           </div>
 
-          {/* Campo para seleccionar el rol (RF-03) */}
+          {/* Campo de Rol */}
           <div className="form-group">
-            <label htmlFor="role">Rol:</label>
+            <label htmlFor="role" className="form-label">Rol</label>
             <select
               id="role"
               value={role}
@@ -85,13 +105,19 @@ function RegisterPage() {
             </select>
           </div>
 
-          <button type="submit" className="btn-auth-submit">
+          <button 
+            type="submit"
+            className="btn-auth-submit"
+          >
             Registrar
           </button>
         </form>
 
         <p className="auth-toggle-link">
-          ¿Ya tienes una cuenta? <Link to="/login">Inicia sesión aquí</Link>
+          ¿Ya tienes una cuenta?{' '}
+          <Link to="/login">
+            Inicia sesión aquí
+          </Link>
         </p>
       </div>
     </div>

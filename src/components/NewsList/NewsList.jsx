@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { db, storage } from "../../firebase"; // Importación limpia (sin extensión)
+import { db, storage } from "../../firebase.js";
 import {
   collection,
   query,
@@ -11,17 +11,22 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
-import { useAuth } from "../../context/AuthContext"; // Importación limpia (sin extensión)
-import { Link } from "react-router-dom";
-import "./NewsList.css"; // <-- Importación necesaria para el estilo
+import { useAuth } from "../../context/AuthContext.jsx";
+import { Link, useNavigate } from "react-router-dom"; // Importamos useNavigate
+import "./NewsList.css";
 
 function NewsList({ mode }) {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentUser, userRole } = useAuth();
+  const navigate = useNavigate(); // Inicializamos useNavigate
 
-  // Función para cambiar el estado (RF-07)
-  const handleChangeStatus = async (newsId, newStatus) => {
+  // Modificación en la función: ahora maneja la navegación después de la acción
+  const handleChangeStatus = async (
+    newsId,
+    newStatus,
+    shouldNavigate = false
+  ) => {
     if (
       !window.confirm(`¿Estás seguro de cambiar el estado a "${newStatus}"?`)
     ) {
@@ -30,12 +35,17 @@ function NewsList({ mode }) {
     try {
       const docRef = doc(db, "news", newsId);
       await updateDoc(docRef, { status: newStatus });
+
+      // Si se pide navegar (usado solo para el botón Terminar)
+      if (shouldNavigate) {
+        // Redirige a la página de edición para que el reportero revise su trabajo
+        navigate(`/dashboard/editar-noticia/${newsId}`);
+      }
     } catch (error) {
       console.error("Error al actualizar el estado:", error);
     }
   };
 
-  // Función para eliminar (D de CRUD)
   const handleDelete = async (newsId, imageUrl) => {
     if (
       !window.confirm(
@@ -69,22 +79,16 @@ function NewsList({ mode }) {
     const newsCollectionRef = collection(db, "news");
     let q;
 
-    // Definir la consulta según el rol (RF-05)
     if (mode === "reporter") {
-      // ⬅️ SOLUCIÓN TEMPORAL: Quitamos orderBy para evitar el error de índice.
-      // Cuando crees el índice en Firebase, puedes volver a añadir la línea orderBy.
       q = query(
         newsCollectionRef,
         where("author", "==", currentUser.uid)
-        // Descomenta la siguiente línea una vez que el índice esté creado en Firebase:
-        // , orderBy('createdAt', 'desc')
+        // , orderBy("createdAt", "desc") // Descomentar al crear el índice
       );
     } else if (mode === "editor") {
-      // El Editor ve todas las noticias, ordenadas por fecha
       q = query(newsCollectionRef, orderBy("createdAt", "desc"));
     }
 
-    // Escuchar cambios en tiempo real
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
@@ -128,15 +132,14 @@ function NewsList({ mode }) {
               e.target.onerror = null;
               e.target.src =
                 "https://placehold.co/180x180/E0E0E0/333333?text=Sin+Imagen";
-            }} // Fallback
+            }}
           />
           <div className="news-item-content">
             <h3>{item.title}</h3>
             <p className="news-meta">
-              <span>Autor: {item.authorEmail}</span>
+              <span>Autor: {item.authorName || item.authorEmail}</span>
               <span>Categoría: {item.category}</span>
             </p>
-            {/* Estado dinámico (RF-07) */}
             <p>
               Estado:
               <span className={`status-tag status-${item.status}`}>
@@ -144,12 +147,34 @@ function NewsList({ mode }) {
               </span>
             </p>
 
-            {/* BOTONES DE ACCIÓN */}
             <div className="news-actions">
-              {/* LÓGICA DEL REPORTERO */}
+              {/* ACCIONES DE REPORTERO */}
               {userRole === "Reportero" && item.author === currentUser.uid && (
                 <>
-                  {/* Editar y Eliminar (Solo si está en Edición/Desactivado/Terminado) */}
+                  {/* VER NOTICIA PUBLICADA (Link público) */}
+                  {item.status === "Publicado" && (
+                    <Link
+                      to={`/noticia/${item.id}`} // Link público
+                      className="action-link view"
+                      target="_blank"
+                    >
+                      Ver Publicación
+                    </Link>
+                  )}
+
+                  {/* BOTÓN TERMINAR (Actualiza estado Y navega a edición) */}
+                  {item.status === "Edición" && (
+                    <button
+                      onClick={() =>
+                        handleChangeStatus(item.id, "Terminado", true)
+                      } // true para navegar
+                      className="action-button finish"
+                    >
+                      Terminar y Revisar
+                    </button>
+                  )}
+
+                  {/* EDITAR (Link a edición/detalle) */}
                   {(item.status === "Edición" ||
                     item.status === "Desactivado" ||
                     item.status === "Terminado") && (
@@ -157,21 +182,11 @@ function NewsList({ mode }) {
                       to={`/dashboard/editar-noticia/${item.id}`}
                       className="action-link edit"
                     >
-                      Editar
+                      {item.status === "Terminado" ? "Ver Detalles" : "Editar"}
                     </Link>
                   )}
 
-                  {/* Pasar a Terminado */}
-                  {item.status === "Edición" && (
-                    <button
-                      onClick={() => handleChangeStatus(item.id, "Terminado")}
-                      className="action-button finish"
-                    >
-                      Terminar
-                    </button>
-                  )}
-
-                  {/* Eliminar (Solo si está en Edición/Desactivado) */}
+                  {/* ELIMINAR */}
                   {(item.status === "Edición" ||
                     item.status === "Desactivado") && (
                     <button
@@ -184,11 +199,21 @@ function NewsList({ mode }) {
                 </>
               )}
 
-              {/* LÓGICA DEL EDITOR */}
+              {/* ACCIONES DE EDITOR */}
               {userRole === "Editor" && (
                 <>
-                  {/* El Editor ve los botones de acción para todas las noticias */}
-                  {/* Publicar (Solo si está Terminado) */}
+                  {/* VER NOTICIA PUBLICADA (Link público) */}
+                  {item.status === "Publicado" && (
+                    <Link
+                      to={`/noticia/${item.id}`}
+                      className="action-link view"
+                      target="_blank"
+                    >
+                      Ver Publicación
+                    </Link>
+                  )}
+
+                  {/* PUBLICAR */}
                   {item.status === "Terminado" && (
                     <button
                       onClick={() => handleChangeStatus(item.id, "Publicado")}
@@ -198,7 +223,7 @@ function NewsList({ mode }) {
                     </button>
                   )}
 
-                  {/* Desactivar (Solo si está Publicado) */}
+                  {/* DESACTIVAR */}
                   {item.status === "Publicado" && (
                     <button
                       onClick={() => handleChangeStatus(item.id, "Desactivado")}
@@ -208,7 +233,7 @@ function NewsList({ mode }) {
                     </button>
                   )}
 
-                  {/* Enviar a Edición (Solo si está Desactivado o Terminado) */}
+                  {/* A EDICIÓN */}
                   {(item.status === "Desactivado" ||
                     item.status === "Terminado") && (
                     <button
@@ -219,13 +244,15 @@ function NewsList({ mode }) {
                     </button>
                   )}
 
-                  {/* El editor puede editar o eliminar siempre (RF-03) */}
+                  {/* EDITAR (Link a edición/detalle) */}
                   <Link
                     to={`/dashboard/editar-noticia/${item.id}`}
                     className="action-link edit-editor"
                   >
                     Editar
                   </Link>
+
+                  {/* ELIMINAR */}
                   <button
                     onClick={() => handleDelete(item.id, item.imageUrl)}
                     className="action-button delete-editor"

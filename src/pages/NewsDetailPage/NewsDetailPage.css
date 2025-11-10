@@ -2,7 +2,7 @@
 .news-detail-container {
     max-width: 900px;
     margin: 30px auto;
-    padding: 0 15px 50px 15px; /* Más padding abajo para el footer */
+    padding: 0 15px 50px 15px; 
 }
 
 /* Botón de Volver */
@@ -75,11 +75,7 @@
     font-size: 18px;
     color: #333;
     line-height: 1.8;
-    white-space: pre-wrap; /* Mantiene saltos de línea y espacios del textarea */
-}
-
-.article-content p:first-child {
-    font-weight: bold; /* Primer párrafo destacado */
+    white-space: pre-wrap; /* Mantiene saltos de línea y espacios */
 }
 
 /* Mensajes de error */
