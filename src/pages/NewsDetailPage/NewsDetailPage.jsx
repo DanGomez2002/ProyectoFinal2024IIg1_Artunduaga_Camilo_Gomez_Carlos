@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../../firebase.js'; 
 import { doc, getDoc } from 'firebase/firestore';
-import { useAuth } from '../../context/AuthContext.jsx'; // Importamos el contexto de autenticación
+import { useAuth } from '../../context/AuthContext.jsx'; // Importante: Verifica la ruta
 import './NewsDetailPage.css'; 
 
 function NewsDetailPage() {
     const { id } = useParams(); 
     const navigate = useNavigate();
-    // 1. Obtener el estado de carga y el usuario (renombrado a authLoading)
+    // 1. Obtener el estado de carga y el usuario
     const { currentUser, loading: authLoading } = useAuth();
 
     const [news, setNews] = useState(null);
@@ -17,6 +17,7 @@ function NewsDetailPage() {
 
     useEffect(() => {
         // 2. BLOQUEAR EL FETCH HASTA QUE AUTH HAYA TERMINADO DE CARGAR
+        // Esto elimina el error intermitente de race condition en Vercel.
         if (authLoading) return;
 
         const fetchNews = async () => {
@@ -30,12 +31,12 @@ function NewsDetailPage() {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     
-                    // LÓGICA DE ACCESO: 
-                    // Si el usuario está autenticado (Editor/Reportero) O la noticia está Publicada, permitir el acceso.
+                    // LÓGICA DE ACCESO FINAL: 
+                    // Si el usuario está autenticado (Editor/Reportero) O la noticia está Publicada, permitir.
                     if (data.status === 'Publicado' || currentUser) {
                         setNews(data);
                     } else {
-                        // Si no está Publicado y no hay usuario autenticado, mostrar error
+                        // Si no está Publicado y no hay usuario autenticado, es un 404 lógico
                         setError("La noticia solicitada no está disponible o no ha sido publicada.");
                         setNews(null);
                     }
@@ -44,7 +45,6 @@ function NewsDetailPage() {
                     setNews(null);
                 }
             } catch (err) {
-                // Esto podría capturar errores de permiso o de ID
                 setError("Error al cargar la noticia. Revisa la consola para más detalles.");
                 console.error(err);
                 setNews(null);
