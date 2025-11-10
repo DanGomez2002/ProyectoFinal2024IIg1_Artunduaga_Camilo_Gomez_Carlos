@@ -115,7 +115,7 @@ function HomePage() {
             <div className="search-bar">
                 <input
                     type="text"
-                    placeholder="Buscar por título o bajante de la publicación..."
+                    placeholder="Buscar por título de la publicación..."
                     // El input usa el estado inmediato (searchTerm) para una respuesta fluida
                     value={searchTerm} 
                     onChange={handleSearchChange}
