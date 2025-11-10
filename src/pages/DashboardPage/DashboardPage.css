@@ -2,24 +2,17 @@
 :root {
     --bg-light: #ffffff;
     --bg-dark: #ffffff;
+    /* Usamos light para el contenido por el diseño */
     --text-dark: #111111;
     --text-light: #ffffff;
     --border-color: #222222;
     --accent-green: #000000;
+    /* Botón Crear */
     --accent-yellow: #ffffff;
-    --accent-red: #dc3545;
+    /* Botón Admin Secciones */
+    --accent-red: #cc0000;
+    /* Botón Cerrar Sesión */
     --font-mono: 'IBM Plex Mono', monospace;
-}
-
-/* === CONTROL DE CAPAS === */
-.navbar {
-    position: relative;
-    z-index: 1000;
-}
-
-.dashboard-container {
-    position: relative;
-    z-index: 1;
 }
 
 /* === CONTENEDOR PRINCIPAL === */
@@ -33,18 +26,21 @@
     display: flex;
     flex-direction: column;
     gap: 25px;
-    overflow: visible;
 }
 
 /* === ENCABEZADO DEL DASHBOARD === */
 .dashboard-header {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    justify-content: space-between;
+    /* Alinea título a la izquierda y info de usuario a la derecha */
+    align-items: center;
     background-color: #ffffff;
     color: #000;
     padding: 40px;
     border: 2px solid var(--border-color);
+    flex-wrap: wrap;
+    /* Para responsividad */
+    gap: 20px;
 }
 
 .dashboard-header h1 {
@@ -53,17 +49,60 @@
     color: #000;
 }
 
+/* Contenedor de usuario y botón de cerrar sesión */
+.user-info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-info-text-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
 .user-info-text {
-    margin-top: 8px;
+    margin: 0 0 4px 0;
     font-size: 1rem;
     font-weight: 400;
-    opacity: 0.9;
+    color: var(--text-dark);
 }
+
+.user-role-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 0;
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+}
+
+/* Estilo del botón Cerrar Sesión */
+.logout-button {
+    background-color: var(--accent-red);
+    color: var(--text-light);
+    border: 2px solid var(--accent-red);
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logout-button:hover {
+    background-color: #a00;
+    transform: scale(1.03);
+}
+
 
 /* === CONTENEDOR DE CONTENIDO PRINCIPAL === */
 .dashboard-content {
     background-color: var(--bg-dark);
-    color: var(--text-light);
+    color: var(--text-dark);
+    /* Color de texto adaptado para la lista de noticias */
     padding: 30px;
     border-radius: 0;
     border: 2px solid var(--border-color);
@@ -85,7 +124,8 @@
 
 .dashboard-actions h2 {
     font-size: 1.25rem;
-    color: var(--text-light);
+    color: var(--text-dark);
+    /* Color de texto ajustado a oscuro */
     margin: 0;
 }
 
@@ -104,21 +144,25 @@
 
 .create-news-link {
     background-color: var(--accent-green);
+    /* Negro */
     color: var(--text-light);
+    /* Blanco */
 }
 
 .create-news-link:hover {
-    background-color: #737272;
+    background-color: #555555;
 }
 
 .admin-sections-link {
     background-color: var(--accent-yellow);
+    /* Blanco */
     color: var(--text-dark);
+    /* Negro */
 }
 
 .admin-sections-link:hover {
-    background-color: #000000;
-    color: var(--text-light);
+    background-color: #e0e0e0;
+    color: var(--text-dark);
 }
 
 /* === RESPONSIVIDAD === */
@@ -131,10 +175,21 @@
 
     .dashboard-header {
         padding: 30px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-info-wrapper {
+        width: 100%;
+        justify-content: space-between;
     }
 
     .dashboard-header h1 {
         font-size: 1.8rem;
+    }
+
+    .user-info-text-details {
+        align-items: flex-start;
     }
 
     .dashboard-actions h2 {
@@ -149,8 +204,24 @@
 /* Móviles grandes (≤ 768px) */
 @media (max-width: 768px) {
     .dashboard-header {
+        align-items: stretch;
+        text-align: left;
+        padding: 20px;
+    }
+
+    .user-info-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .user-info-text-details {
         align-items: center;
         text-align: center;
+    }
+
+    .logout-button {
+        width: 100%;
     }
 
     .dashboard-actions {
@@ -172,30 +243,5 @@
 
 /* Móviles pequeños (≤ 480px) */
 @media (max-width: 480px) {
-    .dashboard-header {
-        padding: 20px;
-    }
-
-    .dashboard-header h1 {
-        font-size: 1.5rem;
-    }
-
-    .user-info-text {
-        font-size: 0.9rem;
-    }
-
-    .dashboard-actions {
-        gap: 10px;
-        padding-bottom: 10px;
-    }
-
-    .create-news-link,
-    .admin-sections-link {
-        font-size: 13px;
-        padding: 8px 12px;
-    }
-
-    .dashboard-content {
-        padding: 15px;
-    }
+    /* Mantenemos los ajustes anteriores */
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { storage, db } from "../../firebase"; // Importación limpia
+// Rutas corregidas para compatibilidad
+import { storage, db } from "../../firebase.js"; 
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   doc,
@@ -10,8 +11,8 @@ import {
   onSnapshot,
   collection,
 } from "firebase/firestore";
-import { useAuth } from "../../context/AuthContext"; // Importación limpia
-import "../CreateNewsPage/CreateNewsPage.css"; // <-- RUTA CORREGIDA para CSS
+import { useAuth } from "../../context/AuthContext.jsx"; 
+import "../CreateNewsPage/CreateNewsPage.css"; // Usamos el CSS del formulario de creación
 
 function EditNewsPage() {
   const { id } = useParams();
@@ -41,12 +42,11 @@ function EditNewsPage() {
       if (docSnap.exists()) {
         const data = docSnap.data();
 
-        // **VALIDACIÓN DE ROL: El Editor pasa este filtro, solo se bloquea al Reportero**
+        // **VALIDACIÓN DE ROL: Bloqueo de Reportero**
         if (
           data.author !== currentUser.uid &&
           currentUser.role === "Reportero"
         ) {
-          // El Reportero está intentando editar una noticia que no es suya.
           setError(
             "No tienes permiso para editar esta noticia. Solo el autor o un Editor pueden modificarla."
           );
@@ -105,7 +105,7 @@ function EditNewsPage() {
         category,
         imageUrl,
         updatedAt: serverTimestamp(),
-        // Vuelve a 'Edición' si estaba Terminado (RF-07)
+        // 🟢 Lógica de flujo de estado: Vuelve a 'Edición' si estaba Terminado (RF-07)
         status: news.status === "Terminado" ? "Edición" : news.status,
       };
 
@@ -137,7 +137,7 @@ function EditNewsPage() {
           <p className="error-message">{error}</p>
           <button
             onClick={() => navigate("/dashboard")}
-            className="btn-primary"
+            className="btn-primary btn-form-submit" // Usamos la clase de botón adaptada
           >
             Volver al Dashboard
           </button>
@@ -149,14 +149,14 @@ function EditNewsPage() {
   return (
     <div className="form-page-container">
       <div className="form-card">
-        <h2>Editar Noticia: {title}</h2>
+        <h2 className="form-title">Editar Noticia: {title}</h2>
 
         <form onSubmit={handleSubmit} className="admin-form">
           {error && <p className="error-message">{error}</p>}
 
           {/* Grupo: Título */}
           <div className="form-group">
-            <label htmlFor="title">Título:</label>
+            <label htmlFor="title" className="form-label">Título:</label>
             <input
               id="title"
               type="text"
@@ -169,7 +169,7 @@ function EditNewsPage() {
 
           {/* Grupo: Subtítulo */}
           <div className="form-group">
-            <label htmlFor="subtitle">Subtítulo (Bajante):</label>
+            <label htmlFor="subtitle" className="form-label">Subtítulo (Bajante):</label>
             <input
               id="subtitle"
               type="text"
@@ -182,7 +182,7 @@ function EditNewsPage() {
 
           {/* Grupo: Categoría */}
           <div className="form-group">
-            <label htmlFor="category">Categoría:</label>
+            <label htmlFor="category" className="form-label">Categoría:</label>
             <select
               id="category"
               value={category}
@@ -203,7 +203,7 @@ function EditNewsPage() {
 
           {/* Manejo de la imagen */}
           <div className="form-group">
-            <label>Imagen Actual:</label>
+            <label className="form-label">Imagen Actual:</label>
             {news?.imageUrl && (
               <img
                 src={news.imageUrl}
@@ -224,7 +224,7 @@ function EditNewsPage() {
 
           {/* Grupo: Contenido */}
           <div className="form-group">
-            <label htmlFor="content">Contenido:</label>
+            <label htmlFor="content" className="form-label">Contenido:</label>
             <textarea
               id="content"
               value={content}

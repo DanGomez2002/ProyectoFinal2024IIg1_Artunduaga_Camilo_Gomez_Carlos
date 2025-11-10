@@ -1,5 +1,5 @@
 /* Fuente global: IBM Plex Mono */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@200;300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@200;300;400;700&display=swap');
 
 /* Contenedor principal de la página de inicio */
 .home-page-container {
@@ -7,7 +7,8 @@
     margin: 30px auto;
     padding: 0 15px;
     font-family: 'IBM Plex Mono', monospace;
-    background-color: #ffffff; /* 🔁 invertido */
+    background-color: #ffffff;
+    /* 🔁 invertido */
     color: #ffffff;
 }
 
@@ -16,16 +17,91 @@
     text-align: center;
     font-weight: 400;
     color: #000000;
-    border-bottom: 2px solid #ffffff; /* 🔁 invertido */
+    border-bottom: 2px solid #ffffff;
+    /* 🔁 invertido */
     padding-bottom: 10px;
     margin-bottom: 40px;
 }
+
+/* === ESTILOS DE FILTROS AÑADIDOS/AJUSTADOS === */
+
+.search-bar {
+    margin-bottom: 20px;
+}
+
+/* Estilo de la barra de búsqueda (Título) */
+.search-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #000000;
+    /* Borde negro fuerte */
+    border-radius: 0;
+    font-size: 1rem;
+    color: #000;
+    background-color: #ffffff;
+    font-family: 'IBM Plex Mono', monospace;
+    box-sizing: border-box;
+    transition: all 0.15s;
+}
+
+.search-input:focus {
+    outline: none;
+    background-color: #ffffff;
+    box-shadow: 3px 3px 0 #333333;
+    /* Sombra de contraste para el foco */
+}
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+/* Estilo de los botones de sección (Filtro) */
+.filter-button {
+    padding: 8px 15px;
+    border: 2px solid #000000;
+    /* Borde negro fuerte */
+    border-radius: 0;
+    background-color: #ffffff;
+    /* Fondo blanco */
+    color: #000000;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+}
+
+.filter-button:hover:not(.active):not(:disabled) {
+    background-color: #f0f0f0;
+    transform: translateY(-1px);
+}
+
+.filter-button.active {
+    background-color: #000000;
+    /* Fondo negro para el activo */
+    color: #ffffff;
+    box-shadow: 2px 2px 0 #333333;
+}
+
+.filter-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f7f7f7;
+    color: #555555;
+    box-shadow: none;
+}
+
+/* === RESTO DE ESTILOS ORIGINALES === */
 
 /* Sección de Noticias por Categoría */
 .news-section {
     margin-bottom: 40px;
     padding: 20px;
-    background-color: #ffffff; /* 🔁 invertido */
+    background-color: #ffffff;
+    /* 🔁 invertido */
     border: 2px solid #000000;
     border-radius: 0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
@@ -34,7 +110,8 @@
 /* Encabezado de cada categoría */
 .news-section h2 {
     font-size: 24px;
-    color: #000000; /* 🔁 invertido */
+    color: #000000;
+    /* 🔁 invertido */
     margin-top: 0;
     margin-bottom: 25px;
     text-align: center;
@@ -46,14 +123,16 @@
 /* Grid de Noticias (Responsivo) */
 .news-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-    gap: 25px; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
 }
 
 /* Tarjeta de Noticia */
 .news-card {
-    background-color: #ffffff; /* 🔁 invertido */
-    border: 2px solid #000000; /* 🔁 invertido */
+    background-color: #ffffff;
+    /* 🔁 invertido */
+    border: 2px solid #000000;
+    /* 🔁 invertido */
     border-radius: 0;
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
@@ -65,13 +144,14 @@
 /* Efecto hover */
 .news-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 🔁 invertido */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    /* 🔁 invertido */
 }
 
 /* Contenedor de imagen */
-.news-card-image-container { 
+.news-card-image-container {
     width: 100%;
-    height: 180px; 
+    height: 180px;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -80,11 +160,11 @@
 }
 
 /* Imagen (sin línea inferior) */
-.news-card-image { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover; 
-    object-position: center; 
+.news-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
     border-bottom: none;
 }
 
@@ -96,12 +176,14 @@
 
 .news-card-content h3 {
     font-size: 18px;
-    color: #000000; /* 🔁 invertido */
+    color: #000000;
+    /* 🔁 invertido */
     margin-bottom: 10px;
 }
 
 .news-card-content p {
-    color: #333333; /* 🔁 invertido */
+    color: #333333;
+    /* 🔁 invertido */
     flex-grow: 1;
     margin-bottom: 15px;
 }
@@ -109,7 +191,8 @@
 /* Enlace "Leer más" */
 .read-more-link {
     text-decoration: none;
-    color: #000000; /* 🔁 invertido */
+    color: #000000;
+    /* 🔁 invertido */
     font-weight: 300;
     padding-top: 8px;
     display: inline-block;
@@ -123,7 +206,8 @@
 /* Mensaje cuando no hay noticias */
 .no-news-message {
     text-align: center;
-    color: #555555; /* 🔁 invertido */
+    color: #555555;
+    /* 🔁 invertido */
     font-style: italic;
     margin-top: 50px;
 }
@@ -133,7 +217,8 @@ h1 {
     font-weight: 500;
     font-size: 2.2rem;
     margin: 0 0 1.5rem 0;
-    color: #ffffff; /* 🔁 invertido */
+    color: #ffffff;
+    /* 🔁 invertido */
     line-height: 1.2;
     text-align: center;
 }

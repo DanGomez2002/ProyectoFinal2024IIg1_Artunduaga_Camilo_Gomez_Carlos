@@ -1,22 +1,33 @@
+/* 📝 Tarjeta de Noticias (Vista Pública) */
 .news-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    background-color: #ffffff;
+    
+    /* Adaptación al estilo del compañero: Borde negro y recto */
+    border: 2px solid #000000; 
+    border-radius: 0; 
+    
     overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    /* Reducimos el box-shadow para mantener el minimalismo, o lo eliminamos */
+    box-shadow: none; 
+    
     transition: transform 0.2s, box-shadow 0.2s;
     width: 300px; 
     min-height: 400px;
+    font-family: 'IBM Plex Mono', monospace; /* Heredamos la tipografía */
 }
 
 .news-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* Hover basado en el estilo de NewsList/Navbar */
+    transform: translateY(-3px); 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra sutil */
 }
 
 .card-image {
     width: 100%;
     height: 180px;
     object-fit: cover;
+    /* Borde de la imagen adaptado al estilo */
+    border-bottom: 1px solid #000000;
 }
 
 .card-content {
@@ -25,7 +36,8 @@
 
 .card-category {
     font-size: 14px;
-    color: #007bff;
+    /* Color adaptado a gris para contraste */
+    color: #555555; 
     margin-bottom: 5px;
     font-weight: 600;
 }
@@ -34,7 +46,7 @@
     font-size: 1.2rem;
     margin-top: 0;
     margin-bottom: 5px;
-    color: #333;
+    color: #111111; /* Negro casi puro */
     line-height: 1.3;
 }
 
@@ -44,25 +56,27 @@
     color: #666;
     margin-bottom: 15px;
     
-    /* Propiedades de WebKit (Chrome, Safari, Edge) para compatibilidad */
+    /* Propiedades de WebKit (Chrome, Safari, Edge) */
     display: -webkit-box;
     -webkit-line-clamp: 2; /* Limita el texto a dos líneas */
     -webkit-box-orient: vertical;
     
-    /* Propiedad estándar (para navegadores modernos/futuros) */
+    /* Propiedad estándar */
     line-clamp: 2; 
 
     overflow: hidden;
 }
 
 .card-link {
-    color: #007bff;
+    /* Color adaptado al azul oscuro que usamos en NewsList para "Ver Publicación" */
+    color: #1a4f8d; 
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s;
+    font-family: 'IBM Plex Mono', monospace;
 }
 
 .card-link:hover {
-    color: #0056b3;
+    color: #0d3864; /* Azul más oscuro al pasar el ratón */
     text-decoration: underline;
 }

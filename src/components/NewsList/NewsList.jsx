@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { db, storage } from "../../firebase.js";
+// Se mantienen las importaciones limpias de tu compañero, pero asegurando el .js/jsx en las rutas relativas si es necesario
+import { db, storage } from "../../firebase.js"; 
 import {
   collection,
   query,
@@ -11,8 +12,8 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
-import { useAuth } from "../../context/AuthContext.jsx";
-import { Link, useNavigate } from "react-router-dom"; // Importamos useNavigate
+import { useAuth } from "../../context/AuthContext.jsx"; 
+import { Link, useNavigate } from "react-router-dom"; // Mantenemos useNavigate
 import "./NewsList.css";
 
 function NewsList({ mode }) {
@@ -21,11 +22,11 @@ function NewsList({ mode }) {
   const { currentUser, userRole } = useAuth();
   const navigate = useNavigate(); // Inicializamos useNavigate
 
-  // Modificación en la función: ahora maneja la navegación después de la acción
+  // 🛠️ Función de Estado con Navegación Condicional (Tu funcionalidad)
   const handleChangeStatus = async (
     newsId,
     newStatus,
-    shouldNavigate = false
+    shouldNavigate = false // Parámetro para saber si navegar después del cambio
   ) => {
     if (
       !window.confirm(`¿Estás seguro de cambiar el estado a "${newStatus}"?`)
@@ -36,9 +37,8 @@ function NewsList({ mode }) {
       const docRef = doc(db, "news", newsId);
       await updateDoc(docRef, { status: newStatus });
 
-      // Si se pide navegar (usado solo para el botón Terminar)
+      // Redirige al Reportero después de "Terminar y Revisar"
       if (shouldNavigate) {
-        // Redirige a la página de edición para que el reportero revise su trabajo
         navigate(`/dashboard/editar-noticia/${newsId}`);
       }
     } catch (error) {
@@ -83,9 +83,11 @@ function NewsList({ mode }) {
       q = query(
         newsCollectionRef,
         where("author", "==", currentUser.uid)
-        // , orderBy("createdAt", "desc") // Descomentar al crear el índice
+        // Usamos la ordenación aquí, asumiendo que el índice (author, createdAt) es requerido
+        , orderBy("createdAt", "desc") 
       );
     } else if (mode === "editor") {
+      // El Editor ve todas las noticias
       q = query(newsCollectionRef, orderBy("createdAt", "desc"));
     }
 
@@ -131,7 +133,7 @@ function NewsList({ mode }) {
             onError={(e) => {
               e.target.onerror = null;
               e.target.src =
-                "https://placehold.co/180x180/E0E0E0/333333?text=Sin+Imagen";
+                "https://placehold.co/120x90/E0E0E0/333333?text=Sin+Imagen";
             }}
           />
           <div className="news-item-content">
@@ -142,6 +144,7 @@ function NewsList({ mode }) {
             </p>
             <p>
               Estado:
+              {/* Usamos un tag span con la clase status-tag para el CSS */}
               <span className={`status-tag status-${item.status}`}>
                 {item.status}
               </span>
@@ -154,7 +157,7 @@ function NewsList({ mode }) {
                   {/* VER NOTICIA PUBLICADA (Link público) */}
                   {item.status === "Publicado" && (
                     <Link
-                      to={`/noticia/${item.id}`} // Link público
+                      to={`/noticia/${item.id}`} 
                       className="action-link view"
                       target="_blank"
                     >
@@ -166,8 +169,9 @@ function NewsList({ mode }) {
                   {item.status === "Edición" && (
                     <button
                       onClick={() =>
-                        handleChangeStatus(item.id, "Terminado", true)
-                      } // true para navegar
+                        // 🟢 AQUÍ: Usamos true para shouldNavigate para redirigir
+                        handleChangeStatus(item.id, "Terminado", true) 
+                      } 
                       className="action-button finish"
                     >
                       Terminar y Revisar
@@ -203,15 +207,13 @@ function NewsList({ mode }) {
               {userRole === "Editor" && (
                 <>
                   {/* VER NOTICIA PUBLICADA (Link público) */}
-                  {item.status === "Publicado" && (
-                    <Link
-                      to={`/noticia/${item.id}`}
-                      className="action-link view"
-                      target="_blank"
-                    >
-                      Ver Publicación
-                    </Link>
-                  )}
+                  <Link
+                    to={`/noticia/${item.id}`}
+                    className="action-link view"
+                    target="_blank"
+                  >
+                    Ver Publicación
+                  </Link>
 
                   {/* PUBLICAR */}
                   {item.status === "Terminado" && (
